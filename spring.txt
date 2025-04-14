@@ -1,0 +1,127 @@
+<< spring boot >>
+
+    - 서버단 작성
+        1) spring framework : 웹개발시 주로 사용
+            => 설정 작업할게 많음
+        2) spring boot : spring framework 간편화 버전
+
+    - 에러
+        200번대 : 
+        400번대 : 
+            1. 404 : 주소 not found
+        500번대 : 서버쪽 에러
+            => 터미널 확인 : TemplateInputException
+
+    - 프로젝트 생성 (프로그램)
+        1. 빌드 툴 설정
+            * build : 프로젝트 생성, 라이브러리 설정, 코드작업, 컴파일, 테스트, 패키지작성, 배포 등을 도와주는 작업
+            1) gradle : 
+                => 일반 text 기반 작성
+                => 후발주자(maven 개선형태)
+            2) maven
+                => xml(html태그 but. 우리가 모르는 태그 why? => 만들어서 사용) 기반 작성
+
+        2. spring boot version 설정
+            => 3.4.4 선택
+
+        3. 언어 선택
+            => java 선택
+
+        4. 패키지명 : (자유롭게 지정 가능)
+            => com.example.demo
+            => 기본적으로 3개 정도는 사용해야 함
+
+        5. packaging type 선택
+            1) .jar : java 압축 파일
+            2) .war : java web 압축 푸일
+                => 화면단에 jsp 사용할 경우 사용
+
+        6. java version 선택
+            => 부트번전에 따라 선택이 달라질 수 있음
+
+        7. 필요 라이브러리 선택
+            => 선택시 해당 엔진으로 시작
+            1) Spring Web
+            2) dev tools
+            3) thymeleaf
+            4) lombok
+
+    - 화면(front)단 작성
+        => html + css + javascript + java
+        
+        1) jsp 활용 : html 코드 + java 코드 동시 작성
+            * .jsp
+            => spring boot 에서 사용하기 위해서는 설정 작업이 별도로 필요
+        2) 특정 템플릿 엔진 활용
+            * .html
+            1. thymeleaf 사용
+            2. mustache
+            3. groovy
+            4. freemaker
+            5. velocity
+    
+    - spring 주요 개념
+        참고 : controller.HomeController.java
+        1) IoC (Inversion of Control) : 메서드나 객체의 호출 작업을 개발자가 결정하는 것이 아니라, 외부(스프링 컨테이너)에서 결정 (제어의 역전)
+
+            ex) 일반적인 방법 : class A {} 를 class B {} 에서의 사용
+                            => class B {
+                                A obj = new A(); 객체 생성 }
+
+                => 제어의 역전 : 단, 알려는 줘야 함
+                    => 컨테이너는 어느 객체를 생성할 것인지 알아야 함 => 어노테이션(@) 사용해서 알려주기
+                        * 컨테이너가 생성한 객체 : bean
+                        * 싱글톤 방식(객체는 하나만 생성)으로 객체 생성
+                            1) @Controller
+                            2) @Service
+                            3) Component
+        
+            * run 을 해서 띄운 포트에 또하나의 run 을 할 수 없음
+
+        2) 경로 임의로 생성
+            ex) http://localhost:8080/ ==> Controller 파일의 메서드와 매핑
+            * getMapping("/") => / 는 8080의미
+
+            1. uri 설계
+                ex) 게시판 개발
+                    게시글 작성 : /board/create
+                    게시글 목록 : /board/list
+                    게시글 조회 : /board/read
+                    게시글 수정 : /board/update
+                    * return 해당 파일 위치 정확히 잡아줘야 함!
+
+            - Controller 생성
+
+                - 어노테이션 생성
+                    -기본
+                        1. @Controller
+                        2. @Log4j2
+                        3. @RequestMapping("중복되는 값")
+                            => @GetMapping() 의 리턴타입을 Stirng -> void로 변경
+
+                            ex)
+                            @RequestMapping("중복되는 값")
+                            public class BoardController {
+                                ex1-1)
+                                @GetMapping("/create")
+                                public String method() {
+                                    return "info";
+                                }
+
+
+                                ex1-2)
+                                @GetMapping("/update")
+                                public void method() {
+                                }
+                            }
+                                ex1-1) 경로 (String)
+                                => http://loacalhost:8080/board/create
+                                    => 브라우저요청 => 컨트롤러 응답 => templates 찾기(경로 : templates/return 값 찾기(info))
+                                    => templates/info.html 작성
+                                
+                                ex1-2) 경로 (void)
+                                => http://loacalhost:8080/board/update
+                                    => 브라우저요청 => 컨트롤러 응답 => templates 찾기(경로 : templates/board/update)
+                                    => templates/board/update 작성
+
+                        
