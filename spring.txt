@@ -5,12 +5,7 @@
             => 설정 작업할게 많음
         2) spring boot : spring framework 간편화 버전
 
-    - 에러
-        200번대 : 
-        400번대 : 
-            1. 404 : 주소 not found
-        500번대 : 서버쪽 에러
-            => 터미널 확인 : TemplateInputException
+        * log.info("{} {}") => {} : printf 와 같은 개념 => 자리만 잡아놓는다
 
     - 프로젝트 생성 (프로그램)
         1. 빌드 툴 설정
@@ -74,7 +69,7 @@
                         * 싱글톤 방식(객체는 하나만 생성)으로 객체 생성
                             1) @Controller
                             2) @Service
-                            3) Component
+                            3) @Component
         
             * run 을 해서 띄운 포트에 또하나의 run 을 할 수 없음
 
@@ -94,8 +89,8 @@
 
                 - 어노테이션 생성
                     -기본
-                        1. @Controller
-                        2. @Log4j2
+                        1. @Controller : new Controller 의 개념
+                        2. @Log4j2 : log 확인
                         3. @RequestMapping("중복되는 값")
                             => @GetMapping() 의 리턴타입을 Stirng -> void로 변경
 
@@ -124,4 +119,163 @@
                                     => 브라우저요청 => 컨트롤러 응답 => templates 찾기(경로 : templates/board/update)
                                     => templates/board/update 작성
 
-                        
+                                - 요청 경로 설정
+                                    1) void : 같은 페이지에서 결과값을 도출하면 void로 해도 상관 없음
+                                    2) String : 같은 페이지가 아닌 다른 페이지에 결과값을 도출하기 원하면 String 으로 해서 return 페이지를 띄워야 함
+
+        3) 내장 서버 : Tomcat(원래는 설치 후 사용 - 스프링부트를 사용한다면 내장되어 있음)
+            => htttp://localhost:8080/ => Tomcat 서버 구동시, 기본 경로
+
+            * SW(SoftWare)web 서버 : 브라우저를 통해 http, https 프로토콜에 응답하는 서버
+                1. Apache
+                2. NginX
+                => but. java 는 위의 엔진으로만 구동되지 않음 why? java의 코드를 해석가능한 서버여야 함
+                    => 해결 : WAS(Web Application Server) : 웹서버 + 자바해석 = Tomcat
+
+        4) 에러
+            200번대 : 정상
+            400번대
+                1. 404 : 주소 not found => 컨트롤러 경로 확인
+                2. 405 : 허용되지 않은 메서드를 사용하려고 시도한 경우 => 컨트롤러 경로 + 매핑방식 확인
+            500번대 : 서버쪽 에러
+                => 터미널 확인 : TemplateInputException
+
+            * 매핑 방식
+
+            - 에러의 해결
+                1. exception 확인
+                2. caused by 확인
+        
+        
+        5) 사용자의 입력값 가져오기
+            참고 : member/login, MemberController
+
+            1. 변수 이용 : 타입 지정 가능, 변수명은 form 요소의 name 과 일치시키기
+                => html 태그 안에서 사용
+                => Model 의 addAttribute 와 함께 사용
+                    1-1. th:text="${}" : thymeleaf 엔진을 활용한 자바를 사용하기
+                        => 변수로 받아오면 html 화면단에서 값이 유지되지 않아서 찍을 수가 없음
+                    1-2. th:value="${}"
+
+                - Model 객체 : 해당 templates 로 같이 값을 가지고 가는 것
+                    => 자바코드를 화면단에 함께 사용하는 방법 : thymeleaf 엔진 사용
+                    
+                    - 메서드
+                        1. addAttribute("name", value);
+                            => name : 화면단에서 불러서 사용 (중복 금지)
+
+            2. 커맨드(DTO 사용) 객체 이용 : 타입 지정 가능, 변수명은 form 요소의 name 과 일치시키기
+                => 장점 : temlate 페이지까지 입력값이 유지됨
+                => 생성 규칙
+                    ex. [[${command객체명?.변수명}]]
+                    command 객체명 : 첫 문자만 소문자로 변환 (변수명을 사용한게 아님!, 객체명을 사용한거임!)
+                    ? : 값이 null 일 수도 있다는걸 알려주는 문자
+                    
+            3. HttpServletRequest 이용 : 사용자의 정보 및 서버 쪽 정보 추출
+                => spring 사용을 안할시, 가져오는 방법
+
+        6) @ModelAttribute("별칭명")
+            => 커맨드 객체에 별칭을 달아서 원래의 변수명이 아닌 별칭명으로 사용
+                ex) model.addAttribute("num1", num1) == @ModelAttribute("num1")
+                    => template 페이지에서 값을 유지하고 싶은 경우 사용
+
+        7) RedirectAttributes : 컨트롤러에서 움직이는 방식이 redirect(리턴값이) 일 때 사용
+            => 움직이면서 특정 값을 가지고 가고 싶을 때 사용
+
+            * return 값에 redirect :/ => 다시 주소를 요청하는 것
+                => 위의 방식으로 가면서 값을 보내는 방법
+                => 이동이 없는 원주소로 가는 방식 : foward 방식
+
+                - 메서드
+                    1) addAttribute
+                        => ex) rttr.addAttribute("userid", "10"); => ?userid=10
+                            => 템플릿 사용법 : ${param.userid}
+                    2) addFlashAttribute
+                        => ex) rttr.addFlashAttribute("password", "12"); => session 객체에 담는 것과 같은 방식
+                            => 템플릿 사용법 : ${password}
+
+        8) 데이터 유지하기
+            
+            1. login.html 입력값 ==> 컨트롤러 ==> 다른 페이지에서 입력값 소멸?
+                => 컨트롤러에서 변수로 직접 받아오는 방식 이용
+                    ex. post (String name, int name ...) {}
+
+            2. login.html 입력값 ==> 컨트롤러 ==> logout.html 까지 입력값 유지하고 싶다면?
+                => forward 방식 or redirect 방식 이용
+
+                    - forward 방식
+                        1. @ModelAttribute
+                        2. Model 객체
+                        3. 커맨드 객체
+                    - redirect 방식
+                        1. RedirectAttributes 객체
+
+            3. login.html 입력값 ==> 컨트롤러 ==> 모든 페이지에서 입력값 유지하고 싶다면?
+                => 세션 이용 : 값을 서버쪽에 저장함 (객체 형태로 담는 것 가능)
+
+                    - session
+                        => HttpSession 객체를 이용해 저장
+                            => 필요 없는 경우 : 제거 or 현재 세션이 유지되고 있는 브라우저 닫으면 종료됨
+
+                    - 쿠키
+                        => 값을 클라이언트 브라우저로 전송 후 저장함
+
+        9) thymeleaf
+            참고 : sample.html
+
+            * JS 에서도 [[${name}]] 함수 사용이 가능
+                ex) const name = "[[${name}]]";
+
+            1. th:text="${name}"
+
+            2. th:value="${name}"
+
+            3. th:each="dto : ${listName}" th:text="${name}"
+                => 리스트 함수를 하나씩 뿌리는 코드
+
+               th:each="dto, 변수명 : ${listName}" th:text="${name}"
+                => 변수명을 선언하여 추가적인 정보 추출 가능
+                    ex. 변수명.index...
+                    1. index : 번호
+                    2. count : 개수
+                    3. size : 리스트 크기
+                    4. odd/even
+                        => 홀/짝에 따라 true, false 반환
+                        * odd : 홀수 / even : 짝수
+
+            4. th:if="{조건}"
+               th:unless="(조건)" => if-else 의 else 에 해당
+
+            5. th:switch="${조건}" => switch-case 와 동일
+                th:case="경우1"
+                th:case="경우2"
+
+            6. th:href="@{/경로}"
+                => why? 서버에 배포함에 따라 경로가 달라질 수 있기 때문에 사용
+                
+            7. #temporals.format(regDateTime, 'yyyy-MM-dd:MM')
+                => 시간을 깔끔하게 정리해주는 함수
+
+    - 메서드
+        1) 매핑의 방식
+
+            * input 의 방식은 String 이지만 원하는 형식으로 자동 형변환을 통해서 받아올 수 있음
+            * html 의 name 과 java 매핑의 변수명을 맞춰서 사용!
+
+            1. GetMapping
+                => method 가 get 인 방식끼리 연결
+            2. PostMapping
+                => method 가 post 인 방식끼리 연결
+                => 서버로 전송
+
+    - DTO(Data Trasfer Object)
+        => 객체간 데이터 교환방식 (박스의 개념)
+
+        - 생성 어노테이션
+            @ToString
+            @Builder
+            @AllArgsConstructor
+            @NoArgsConstructor
+            @Setter
+            @Getter
+

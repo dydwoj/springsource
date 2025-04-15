@@ -2,9 +2,15 @@ package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.dto.MemberDTO;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @RequestMapping("/member")
 @Log4j2
@@ -23,9 +29,39 @@ public class MemberController {
         log.info("회원가입");
     }
 
+    @PostMapping("/register")
+    public String postRegister(@ModelAttribute("mDTO") MemberDTO memberDTO, RedirectAttributes rttr) {
+        log.info("등록 {}", memberDTO);
+
+        // redirect 방식으로 움직이면서 값을 보내는 방법
+        // 방법 1. addAttribute
+        rttr.addAttribute("userid", memberDTO.getUserid());
+        // => /member/login?userid=1
+        // 방법 2. addFlashAttribute
+        rttr.addFlashAttribute("password", memberDTO.getPassword());
+        // =>
+        // 로그인 페이지로 이동
+        return "redirect:/member/login";
+    }
+
     @GetMapping("/login")
     public void getLogin() {
         log.info("로그인");
+    }
+
+    @PostMapping("/login")
+    // public void postLogin(String userid, String password) {
+    // public void postLogin(LoginDTO loginDTO) {
+    public void postLogin(HttpServletRequest request) {
+
+        String userid = request.getParameter("userid");
+        String password = request.getParameter("password");
+        String remote = request.getRemoteAddr();
+        String local = request.getLocalAddr();
+
+        log.info("로그인 요청 {}, {}", userid, password);
+        log.info("클라이언트 정보 {}, {}", remote, local);
+        // templates 찾기
     }
 
     @GetMapping("/logout")

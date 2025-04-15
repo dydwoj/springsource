@@ -7,15 +7,18 @@
   </head>
   <body>
     <h3 th:text="${session.name1}"></h3>
-    <h1>Info</h1>
+    <h1>사칙연산</h1>
     <form action="" method="post">
       <input type="text" name="num1" id="num1" size="5" />
-      +
+      <select name="op" id="op">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+        <option value="%">%</option>
+      </select>
       <input type="text" name="num2" id="num2" size="5" />
-      <button type="submit">덧셈</button>
+      <button type="submit">연산</button>
     </form>
-    <div id="num1" th:text="${num1}">num1</div>
-    <div id="num1" th:text="${num2}"></div>
-    <div id="result" th:text="${result}">결과</div>
   </body>
 </html>
