@@ -17,7 +17,7 @@
       <li>last : <span th:text="${dto.last}"></span></li>
       <li>regDateTime : <span th:text="${dto.regDateTime}"></span></li>
     </ul>
-    <!-- 리스트 출력 -->
+    <!-- 리스트를 테이블로 출력 -->
     <ul>
       <li th:each="dto : ${list}" th:text="${dto}"></li>
     </ul>
@@ -30,7 +30,9 @@
       </tr>
       <tr th:each="dto : ${list}">
         <td th:text="${dto.id}"></td>
-        <td th:text="${dto.first}"></td>
+        <td>
+          <a th:href="@{ex2(id=${dto.id})}" th:text="${dto.first}"></a>
+        </td>
         <td th:text="${dto.last}"></td>
         <td th:text="${#temporals.format(dto.regDateTime, 'yyyy-MM-dd:mm')}"></td>
       </tr>
@@ -97,6 +99,26 @@
         <span th:case="true" th:text="${dto.first}"></span>
         <span th:case="false" th:text="${dto.last}"></span>
       </li>
+    </ul>
+    <!-- a태그 -->
+    <h3>웹 페이지 링크</h3>
+    <ul>
+      <li><a th:href="@{/calc}">calc</a></li>
+      <li><a th:href="@{/ex1(param1='data1', param2=10)}">ex1</a></li>
+      <!-- 일반 href 주소줄이라면 : ex1?param1=data1&param2=10 -->
+    </ul>
+    <!-- 유틸리티 객체 -->
+    <h3>thymeleaf 유틸리티 객체</h3>
+    <ul>
+      <li th:text="${price}"></li>
+      <li th:text="${#numbers.formatInteger(price, 3, 'COMMA')}"></li>
+      <li th:text="${options}"></li>
+      <li th:text="${#lists.size(options)}"></li>
+      <li th:text="${#lists.contains(options, 'AAAA')}"></li>
+      <li th:text="${now}"></li>
+      <li th:text="${#dates.format(now, 'yyyy-MM-dd')}"></li>
+      <li th:text="${title}"></li>
+      <li th:text="${#strings.replace(title, 's', '<b>s</b>')}"></li>
     </ul>
     <script>
       const name = "[[${name}]]";
