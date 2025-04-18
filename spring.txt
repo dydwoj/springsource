@@ -3,6 +3,9 @@
     * maven : 라이브러리 관리
         => repository : 라이브러리 모음
 
+    - 프로젝트 구조
+        repository => (entity) => service => (DTO) => controller
+
     - 서버단 작성
         1) spring framework : 웹개발시 주로 사용
             => 설정 작업할게 많음
@@ -95,6 +98,7 @@
                 4) delete()
                    deleteById()
                     => 삭제
+                * Id : Id 어노테이션이 붙은것을 의미 
                     
         
         - 프레임워크
@@ -218,6 +222,13 @@
             3. groovy
             4. freemaker
             5. velocity
+
+        - 수정 작업 단계
+            참고 : jpa/memo
+            1) 보여주기
+                ex) /memo/update?mno=3 + get
+            2) 실제 수정
+                ex) /memo/update?mno=3 + post
     
     - spring 주요 개념
         참고 : controller.HomeController.java
@@ -237,7 +248,19 @@
         
             * run 을 해서 띄운 포트에 또하나의 run 을 할 수 없음
 
-        2) 경로 임의로 생성
+        2) Injection(주입)
+            @Controller, @Service, @Component 을 통해서 생성된 객체를 언제, 어디에 사용할 것인지 알려주는 개념
+            
+            - 주입 시기를 알려주는 어노테이션
+                @Autowired => 필요한 객체 위에 작성
+                    => 컨테이너가 관리하는 객체를 주입해주세요의 의미
+                    => @Service 가 붙은 객체를 new 의 개념으로 가지고 있음
+
+                    @Autowired                            == 클래스에 @RequiredArgsConstructor
+                    private MemoRepository memoRepository == private final MemoService memoService
+                    * 테스트 클래스에서는 final 과 @RequiredArgsConstructor 사용 못함
+
+        3) 경로 임의로 생성
             ex) http://localhost:8080/ ==> Controller 파일의 메서드와 매핑
             * getMapping("/") => / 는 8080의미
 
@@ -287,7 +310,7 @@
                                     1) void : 같은 페이지에서 결과값을 도출하면 void로 해도 상관 없음
                                     2) String : 같은 페이지가 아닌 다른 페이지에 결과값을 도출하기 원하면 String 으로 해서 return 페이지를 띄워야 함
 
-        3) 내장 서버 : Tomcat(원래는 설치 후 사용 - 스프링부트를 사용한다면 내장되어 있음)
+        4) 내장 서버 : Tomcat(원래는 설치 후 사용 - 스프링부트를 사용한다면 내장되어 있음)
             => htttp://localhost:8080/ => Tomcat 서버 구동시, 기본 경로
 
             * SW(SoftWare)web 서버 : 브라우저를 통해 http, https 프로토콜에 응답하는 서버
@@ -296,7 +319,7 @@
                 => but. java 는 위의 엔진으로만 구동되지 않음 why? java의 코드를 해석가능한 서버여야 함
                     => 해결 : WAS(Web Application Server) : 웹서버 + 자바해석 = Tomcat
 
-        4) 에러
+        5) 에러
             200번대 : 정상
             400번대
                 1. 404 : 주소 not found => 컨트롤러 경로 확인
@@ -311,7 +334,7 @@
                 2. caused by 확인
         
         
-        5) 사용자의 입력값 가져오기
+        6) 사용자의 입력값 가져오기
             참고 : member/login, MemberController
 
             1. 변수 이용 : 타입 지정 가능, 변수명은 form 요소의 name 과 일치시키기
@@ -338,12 +361,12 @@
             3. HttpServletRequest 이용 : 사용자의 정보 및 서버 쪽 정보 추출
                 => spring 사용을 안할시, 가져오는 방법
 
-        6) @ModelAttribute("별칭명")
+        7) @ModelAttribute("별칭명")
             => 커맨드 객체에 별칭을 달아서 원래의 변수명이 아닌 별칭명으로 사용
                 ex) model.addAttribute("num1", num1) == @ModelAttribute("num1")
                     => template 페이지에서 값을 유지하고 싶은 경우 사용
 
-        7) RedirectAttributes : 컨트롤러에서 움직이는 방식이 redirect(리턴값이) 일 때 사용
+        8) RedirectAttributes : 컨트롤러에서 움직이는 방식이 redirect(리턴값이) 일 때 사용
             => 움직이면서 특정 값을 가지고 가고 싶을 때 사용
 
             * return 값에 redirect :/ => 다시 주소를 요청하는 것
@@ -358,7 +381,7 @@
                         => ex) rttr.addFlashAttribute("password", "12"); => session 객체에 담는 것과 같은 방식
                             => 템플릿 사용법 : ${password}
 
-        8) 데이터 유지하기
+        9) 데이터 유지하기
             
             1. login.html 입력값 ==> 컨트롤러 ==> 다른 페이지에서 입력값 소멸?
                 => 컨트롤러에서 변수로 직접 받아오는 방식 이용
@@ -384,7 +407,7 @@
                     - 쿠키
                         => 값을 클라이언트 브라우저로 전송 후 저장함
 
-        9) thymeleaf
+        10) thymeleaf
             참고 : sample.html
 
             * JS 에서도 [[${name}]] 함수 사용이 가능
@@ -459,11 +482,12 @@
             * input 의 방식은 String 이지만 원하는 형식으로 자동 형변환을 통해서 받아올 수 있음
             * html 의 name 과 java 매핑의 변수명을 맞춰서 사용!
 
-            1. GetMapping
+            1. @GetMapping()
                 => method 가 get 인 방식끼리 연결
-            2. PostMapping
+            2. @PostMapping()
                 => method 가 post 인 방식끼리 연결
                 => 서버로 전송
+            * ({"경로 1", "경로 2"}) 경로를 두개 받을수도 있음
 
     - DTO(Data Trasfer Object)
         => 객체간 데이터 교환방식 (박스의 개념)
@@ -492,4 +516,20 @@
         => 각 구성에 맞게 들어갈 영역들을 알맞게 구성
             if 유동적인 영역일시 => th:block 태그로 영역을 잡기
     
+    - service
+        참고 : service
+        => 컨트롤러가 service 메서드를 호출
+            => service가 Repository 메서드를 호출 : 결과만 받아내는 곳
+
+        - 어노테이션
+            @RequiredArgsConstructor
+                => + final 변수와 같이 사용 == @Autowired 에 final 안붙인거
+
+            @Service
     
+    - FK (외래키)
+        참고 : entity/team
+        => 외래키 제약 조건은 N쪽에 건다 why? 중복이 덜 되니까
+
+            - 관계표현
+                @ManyToOne : 다대일

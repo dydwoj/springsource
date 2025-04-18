@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 // db 기준
@@ -24,7 +23,7 @@ import lombok.ToString;
 // mno : 시퀀스 자동증가, pk
 // 나머지 칼럼 : not null
 @Getter
-@Setter
+// @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -48,4 +47,8 @@ public class Memo {
     @Column(nullable = false)
     @LastModifiedDate
     private LocalDateTime updatedDate;
+
+    public void changeMemoText(String memoText) {
+        this.memoText = memoText;
+    }
 }
