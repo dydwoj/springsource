@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.jpa.dto.MemoDTO;
 import com.example.jpa.service.MemoService;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RequestMapping("/memo")
 @Log4j2

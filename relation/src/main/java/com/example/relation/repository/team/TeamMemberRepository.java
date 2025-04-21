@@ -1,8 +1,8 @@
-package com.example.jpa.repository.team;
+package com.example.relation.repository.team;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.jpa.entity.team.TeamMember;
+import com.example.relation.entity.team.TeamMember;
 
 public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 

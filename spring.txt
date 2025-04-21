@@ -234,6 +234,9 @@
         참고 : controller.HomeController.java
         1) IoC (Inversion of Control) : 메서드나 객체의 호출 작업을 개발자가 결정하는 것이 아니라, 외부(스프링 컨테이너)에서 결정 (제어의 역전)
 
+            * 기존 java 에서는 new 안하면 nullPointerException 이 나오나 spring boot 에서는 Exception 이 안남!
+                => IoC + Injection 의 만남으로 가능! => spring 컨테이너의 주요 개념
+
             ex) 일반적인 방법 : class A {} 를 class B {} 에서의 사용
                             => class B {
                                 A obj = new A(); 객체 생성 }

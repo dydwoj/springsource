@@ -1,13 +1,13 @@
-package com.example.jpa.repository;
+package com.example.relation.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.example.jpa.entity.team.Team;
-import com.example.jpa.entity.team.TeamMember;
-import com.example.jpa.repository.team.TeamMemberRepository;
-import com.example.jpa.repository.team.TeamRepository;
+import com.example.relation.entity.team.Team;
+import com.example.relation.entity.team.TeamMember;
+import com.example.relation.repository.team.TeamMemberRepository;
+import com.example.relation.repository.team.TeamRepository;
 
 @SpringBootTest
 public class TeamRepositoryTest {

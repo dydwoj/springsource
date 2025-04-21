@@ -1,4 +1,4 @@
-package com.example.jpa.entity.team;
+package com.example.relation.entity.team;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
