@@ -1,11 +1,10 @@
-package com.example.relation.entity.team;
+package com.example.relation.entity.cascade;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,28 +16,24 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-// 하나의 팀에는 여러 회원이 소속된다 (여기가 1)
-
-@ToString(exclude = "members")
-@Builder
-@Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@ToString(exclude = "childs")
+@Builder
 
 @Entity
-public class Team {
-    // id, name(팀명)
+public class Parent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "team_id")
     private Long id;
 
-    private String teamName;
+    private String name;
 
     @Builder.Default
-    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
-    private List<TeamMember> members = new ArrayList<>();
+    @OneToMany(mappedBy = "parent", cascade = { CascadeType.PERSIST, CascadeType.REMOVE, }, orphanRemoval = true)
+    private List<Child> childs = new ArrayList<>();
 
 }

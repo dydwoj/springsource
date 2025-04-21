@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import lombok.ToString;
 
 // 회원은 단 하나의 팀에 소속된다 (여기가 N)
 
-@ToString
+@ToString(exclude = "team")
 @Builder
 @Getter
 @Setter
@@ -32,6 +33,7 @@ public class TeamMember {
 
     private String userName;
 
+    @JoinColumn(name = "team_id")
     @ManyToOne // => 테이블명 + 컬럼명으로 이름 생성
     private Team team;
 }

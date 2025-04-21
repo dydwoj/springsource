@@ -531,8 +531,82 @@
             @Service
     
     - FK (외래키)
-        참고 : entity/team
+        참고 : team, sports
         => 외래키 제약 조건은 N쪽에 건다 why? 중복이 덜 되니까
 
-            - 관계표현
+            - 메서드
+                @JoinColumn(name = "") : 외래키 필드명 지정
+                    => 작성 안할시, 테이블명_PK명 으로 이름 생성
+                @ToString(exclude = "컬럼명") : 순환참조에 에러가 나기 때문에 걸러야함
+                @Builder.Default : OneToMany 의 빌더가 안되기에 붙여줌
+
+            - 관계표현 (관계설정 어노테이션)
+                * 끝자리가 One 인 것 : EAGER 상태
+
                 @ManyToOne : 다대일
+                    => left join 이 기본값
+                    => 정보를 가지고 나올 때 관련있는 테이블 정보를 가지고 나옴
+                    => FetchType.EAGER 인 상태
+                    ex) 부서와 사원, 팀과 회원, 학과와 학생 등...
+
+                @OneToMany : 일대다 => 양방향 연관관계
+                    => One 에 해당하는 Table 만 select 실행이 기본값
+                    => 정보를 가지고 나올 때 관련있는 테이블 정보를 안 가지고 나옴
+                    => FetchType.LAZY 인 상태
+                    * 양방향 연관관계 => 단방향 2개 넣은 것 (양방향은 관계는 없음)
+                        => 부모에서 자식의 값을 조회하기 위해서 사용
+                        => DB 테이블은 외래키 하나로 양쪽이 서로 조인 가능 => 객체는 한쪽만 관계 설정을 하면 안됨
+                            => 단반향 2개를 여는 대신, 주가 되는 관계가 누구인지 지정 : N 쪽이 주
+                                => @OneToMany(mappedBy = "N쪽의컬럼명")
+                                    - 장점
+                                        조회 방법이 하나 더 생기는 것 => 조회만 가능 나머지 권한 X
+                                            ex) 부서 조회시, 부서에 속한 모든 사원 정보 조회
+                        
+                    - FetchType.LAZY 일 때 관련있는 테이블 정보에 접근시
+                        => Lazy 관련 Exception 발생 : 정보를 가지고 나오지 않았다는 뜻
+                            => 해결법
+                                1. @Transactional : SELECT 구문 2개로 처리 (left join 처리)
+                                    => 주가 되는 관계가 누구인지 지정
+                                2. FetchType 변경
+                                    => @OneToMany(fetch = FetchType.EAGER)
+                                        * EAGER : 즉시의 의미
+                                        => 관계가 있는 테이블의 정보를 즉시 가지고 나오기의 의미
+                                        => left join 처리
+                
+                @OneToOne
+                    => left join 이 기본값
+                    => 정보를 가지고 나올 때 관련있는 테이블 정보를 가지고 나옴
+                    => FetchType.EAGER 인 상태
+
+                @ManyToMany
+                    => 실제 업무 환경에서는 잘 사용되지 않음
+                    => @ManyToOne 관계로 변경 후 사용
+                    => FetchType.LAZY 인 상태
+
+            - 프록시
+                => 지연 로딩 : 프록시를 통해 연관된 객체를 실제 사용하는 시점에 데이터베이스에서 조회하도록 함
+                => 즉시 로딩 : 자주 함께 사용하는 객체들은 조인을 통해서 함께 조회
+                
+                - FetchType
+                    * 모든 로딩은 지연 로딩이 default, 필요한 경우만 즉시 로딩
+                    1. FetchType.LAZY : 지연 로딩
+                    2. FetchType.EAGER : 즉시 로딩
+                        2-1. @ManyToOne
+                        2-2. @OneToOne
+                            => FetchType.EAGER => FetchType.LAZY 바꾸기
+    
+    - 영속성 관리
+        참고 : cascade
+        => 양방향일 때 사용할 수 있는 개념
+        => 부모 저장시, 자식 엔티티도 같이 저장
+        * cascade : 부모가 무슨일이 생길때 자식들도 같이 생기게 해줘
+        
+        => ManyToOne <> OneToMany 관계
+            - 어노테이션
+                => @OneToMany()
+                    1. (cascade = { CascadeType.PERSIST })
+                        => 별도의 자식repository에 저장하지 않고도 부모를 저장하면서 자식도 같이 저장
+                    2. (cascade = { CascadeType.REMOVE })
+                        => 부모 삭제시, 자식도 같이 삭제
+                    3. (orphanRemoval = true)
+                        => 부모 객체에서 자식 객체를 \제거(고아객체)하면 자식객체가 제거
