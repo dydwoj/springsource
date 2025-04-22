@@ -1,4 +1,4 @@
-package com.example.relation;
+package com.example.mart;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
-public class RelationApplication {
+public class MartApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RelationApplication.class, args);
+		SpringApplication.run(MartApplication.class, args);
 	}
 
 }

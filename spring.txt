@@ -21,6 +21,14 @@
                 => 후발주자(maven 개선형태)
             2) maven
                 => xml(html태그 but. 우리가 모르는 태그 why? => 만들어서 사용) 기반 작성
+                    * modelmapper : dto ==> Entity / Entity ==> dto 자동으로 처리
+                        => 별도의 환경설정 필요
+                            1. RootConfig.java 작성
+                                참고 : jpa/config
+                                * Bean : 스프링부트가 가지고 있고 관리해줘
+                        
+                        - 사용법
+                            modelMapper.map(원본, 수정(ex. MemoDTO.class))
 
         2. spring boot version 설정
             => 3.4.4 선택
@@ -190,6 +198,9 @@
                                 => 복잡한 작업이나 더 많이 쓰임 why? 상속 작업을 위해서
                                 @CreatedDate
                                 @LastModifiedDate
+
+                                * @MappedSuperclass
+                                    => 테이블과 연동(매핑)되지 않고 자식 클래스에 Entity의 매핑 정보 상속
 
                         @Enumerated(EnumType.타입)
                             => 정해진 것들만 받아들이기 위해 사용
@@ -599,14 +610,19 @@
         참고 : cascade
         => 양방향일 때 사용할 수 있는 개념
         => 부모 저장시, 자식 엔티티도 같이 저장
+        => 영속성 상태에 있어야 Entity 삽입, 삭제, 수정 가능
         * cascade : 부모가 무슨일이 생길때 자식들도 같이 생기게 해줘
+            => 영속성 전이라고 함
         
         => ManyToOne <> OneToMany 관계
             - 어노테이션
                 => @OneToMany()
                     1. (cascade = { CascadeType.PERSIST })
                         => 별도의 자식repository에 저장하지 않고도 부모를 저장하면서 자식도 같이 저장
+                        * 새로 만드는 것과 수정해야 하는 것을 동시에 수행하면 null 값을 넣을수 없다는 에러 발생할 수 있음
                     2. (cascade = { CascadeType.REMOVE })
                         => 부모 삭제시, 자식도 같이 삭제
                     3. (orphanRemoval = true)
-                        => 부모 객체에서 자식 객체를 \제거(고아객체)하면 자식객체가 제거
+                        => 부모 객체에서 자식 객체를 제거(고아객체)하면서 자식객체가 제거
+                    4. (cascade = { CascadeType.MERGE })
+                        => 수정의 개념

@@ -1,5 +1,7 @@
 package com.example.relation.entity.sports;
 
+import com.example.relation.entity.BaseEntity;
+
 import jakarta.persistence.Column;
 
 // 회원:사물함 = 1:1
@@ -25,7 +27,7 @@ import lombok.ToString;
 @Builder
 
 @Entity
-public class Locker {
+public class Locker extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -99,4 +99,27 @@ public class TeamRepositoryTest {
         // 객체 그래프 탐색
         team.getMembers().forEach(member -> System.out.println(member));
     }
+
+    // --------------------------
+    // 양방향
+    // 영속성 전이 : cascade
+    // --------------------------
+
+    @Test
+    public void insertTest3() {
+        // teamMemberRepository.save(member); 코드 사용 안하고 부모한테 추가만 함
+        Team team = Team.builder().teamName("team3").build();
+
+        TeamMember member = TeamMember.builder().userName("홍길동").team(team).build();
+        team.getMembers().add(member);
+        teamRepository.save(team);
+    }
+
+    @Test
+    public void deleteTest2() {
+        // 부모 삭제시, 자식도 같이 삭제
+        // deleteTest() 와 비교
+        teamRepository.deleteById(3L);
+    }
+
 }

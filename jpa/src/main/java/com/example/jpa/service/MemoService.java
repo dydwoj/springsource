@@ -3,6 +3,7 @@ package com.example.jpa.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.example.jpa.dto.MemoDTO;
@@ -18,6 +19,7 @@ public class MemoService {
     // repository 메서드 호출하는 역할
 
     private final MemoRepository memoRepository;
+    private final ModelMapper modelMapper;
 
     public List<MemoDTO> getList() {
         List<Memo> list = memoRepository.findAll();
@@ -36,6 +38,7 @@ public class MemoService {
 
         List<MemoDTO> memos = list.stream()
                 .map(memo -> entityToDTO(memo))
+                // modelMapper.map(memo, MemoDTO.class) => 대체 가능
                 .collect(Collectors.toList());
         return memos;
     }
@@ -43,7 +46,8 @@ public class MemoService {
     public MemoDTO getRow(Long mno) {
         Memo memo = memoRepository.findById(mno).orElseThrow(EntityNotFoundException::new);
         // entity => dto
-        MemoDTO dto = entityToDTO(memo);
+        // MemoDTO dto = entityToDTO(memo); => 직접 메서드를 만든 경우
+        MemoDTO dto = modelMapper.map(memo, MemoDTO.class);
         return dto;
     }
 
@@ -62,7 +66,9 @@ public class MemoService {
     public Long memoCreate(MemoDTO dto) {
         // 새로 입력할 memo는 MemoDTO 에 저장
         // MemoDTO => Memo 변환
+        // 메서드 직접 변환
         Memo memo = dtoToEntity(dto);
+        // Memo memo = modelMapper.map(dto, Memo.class);
         // 새로 저장한 memo 리턴
         memo = memoRepository.save(memo);
         return memo.getMno();
