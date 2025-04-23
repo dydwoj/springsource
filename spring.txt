@@ -2,6 +2,9 @@
 
     * maven : 라이브러리 관리
         => repository : 라이브러리 모음
+    * boolean 값이 없는 곳 에서 true/false
+        0 : false
+        0 제외 : true
 
     - 프로젝트 구조
         repository => (entity) => service => (DTO) => controller
@@ -68,13 +71,30 @@
             6) oracle driver
             7) validation
             - 별도 추가
-                1) thymeleaf dialect
+                => maven properties 에서 해당 코드 복사후 porm.xml dependencies 에 추가
+                1) thymeleaf layout dialect
+                    <dependency>
+                        <groupId>nz.net.ultraq.thymeleaf</groupId>
+                        <artifactId>thymeleaf-layout-dialect</artifactId>
+                        <version>3.4.0</version>
+                    </dependency>
+                2) modelMapper
+                    <dependency>
+                        <groupId>org.modelmapper</groupId>
+                        <artifactId>modelmapper</artifactId>
+                        <version>3.2.2</version>
+		            </dependency>
+        8. config 파일 src.main.java.com.example.프로젝트명 => 폴더째로 붙여넣기
+
+        9. BaseEntity 작성
+                main/Application 에 @EnableJpaAuditing 추가
 
     - 데이터베이스(DB) 작업
 
         - 테스트 (CRUD) = Repository + Entity 확인
             => 단위 테스트(메서드별) 실행 (중간중간 이상이 없는지 실행해서 테스트)
             * main 폴더 안에다가 작성 => 테스트의 목적일 때만 test 폴더 사용
+            * @Test => Junit 라이브러리 안에 있음
 
             - 형식
                 테스트 폴더의 jpa 에서 실행
@@ -479,6 +499,7 @@
                 4. #lists.contains(name, '찾으려는 것')
 
             - fragment (상속의 개념)
+                * :: => 파일 내부의 이름이 무엇인지 의미
                 참고 : fragment, layout, content
                     => 파일이 많으니 모든 파일을 통해서 확인
                 th:fragment="name"
@@ -538,6 +559,7 @@
         - 어노테이션
             @RequiredArgsConstructor
                 => + final 변수와 같이 사용 == @Autowired 에 final 안붙인거
+                => 생성자가 자동으로 만들어지고 초기화 코드가 들어있음
 
             @Service
     
@@ -593,6 +615,13 @@
                     => 실제 업무 환경에서는 잘 사용되지 않음
                     => @ManyToOne 관계로 변경 후 사용
                     => FetchType.LAZY 인 상태
+                    ex) 좋아요, 카테고리 등...
+                    => 추가적인 확장성이 떨어짐
+                        - 작성 ex.
+                            @Builder.Default
+                            @JoinTable(name = "CATEGORY_ITEM1", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_ID"))
+                            @ManyToMany
+                            private List<Item> items = new ArrayList<>();
 
             - 프록시
                 => 지연 로딩 : 프록시를 통해 연관된 객체를 실제 사용하는 시점에 데이터베이스에서 조회하도록 함
@@ -626,3 +655,6 @@
                         => 부모 객체에서 자식 객체를 제거(고아객체)하면서 자식객체가 제거
                     4. (cascade = { CascadeType.MERGE })
                         => 수정의 개념
+
+    - Repository 에 원하는 메서드 만들기
+        참고 : todo/ToDoRepository

@@ -1,12 +1,14 @@
 package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.dto.MemberDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,13 +27,19 @@ public class MemberController {
     // void : templates/member/register.html
 
     @GetMapping("/register")
-    public void getRegister() {
+    public void getRegister(@ModelAttribute("mDto") MemberDTO memberDTO) {
         log.info("회원가입");
     }
 
     @PostMapping("/register")
-    public String postRegister(@ModelAttribute("mDTO") MemberDTO memberDTO, RedirectAttributes rttr) {
+    public String postRegister(@ModelAttribute("mDto") @Valid MemberDTO memberDTO, BindingResult result,
+            RedirectAttributes rttr) {
         log.info("등록 {}", memberDTO);
+
+        // 유효성 검사 통과하지 못했다면 원래 입력 페이지로 돌아가기
+        if (result.hasErrors()) {
+            return "/member/register";
+        }
 
         // redirect 방식으로 움직이면서 값을 보내는 방법
         // 방법 1. addAttribute

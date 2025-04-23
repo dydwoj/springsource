@@ -24,7 +24,7 @@ import jakarta.transaction.Transactional;
 public class MartRepositoryTest {
 
     @Autowired
-    private ItemRepository itemrRepository;
+    private ItemRepository itemRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -65,7 +65,7 @@ public class MartRepositoryTest {
                     .price(i * 20000)
                     .stockQuantity(i * 5)
                     .build();
-            itemrRepository.save(item);
+            itemRepository.save(item);
         });
     }
 
@@ -81,7 +81,7 @@ public class MartRepositoryTest {
 
         // 주문과 관련된 상품은 OrderItem 삽입
         OrderItem orderItem = OrderItem.builder()
-                .item(itemrRepository.findById(2L).get())
+                .item(itemRepository.findById(2L).get())
                 .order(order)
                 .orderPrice(39000)
                 .count(1)
@@ -89,7 +89,7 @@ public class MartRepositoryTest {
         orderItemRepository.save(orderItem);
 
         orderItem = OrderItem.builder()
-                .item(itemrRepository.findById(3L).get())
+                .item(itemRepository.findById(3L).get())
                 .order(order)
                 .orderPrice(45000)
                 .count(1)
@@ -195,7 +195,7 @@ public class MartRepositoryTest {
 
         // 주문과 관련된 상품은 OrderItem 삽입
         OrderItem orderItem = OrderItem.builder()
-                .item(itemrRepository.findById(2L).get())
+                .item(itemRepository.findById(2L).get())
                 .order(order)
                 .orderPrice(39000)
                 .count(1)
@@ -267,15 +267,44 @@ public class MartRepositoryTest {
     }
 
     @Test
-    public void testCategoryInsert() {
-        Category category = Category.builder().name("의류").build();
-        categoryRepository.save(category);
+    public void testCategoryItemInsert1() {
+        Category category1 = Category.builder().name("식품").build();
+        Category category2 = Category.builder().name("생활용품").build();
+        categoryRepository.save(category1);
+        categoryRepository.save(category2);
+
+        // 아이템 입력
+        Item item1 = Item.builder().name("냉동만두").price(15000).stockQuantity(15).build();
+        itemRepository.save(item1);
 
         CategoryItem categoryItem = CategoryItem.builder()
-                .category(category)
-                .item(itemrRepository.findById(4L).get())
+                .category(category1)
+                .item(item1)
                 .build();
         categoryItemRepository.save(categoryItem);
+
+        item1 = Item.builder().name("샴푸").price(9000).stockQuantity(7).build();
+        itemRepository.save(item1);
+
+        categoryItem = CategoryItem.builder()
+                .category(category2)
+                .item(item1)
+                .build();
+        categoryItemRepository.save(categoryItem);
+    }
+
+    @Transactional
+    @Test
+    public void testReadCateItem() {
+        CategoryItem categoryItem = categoryItemRepository.findById(1L).get();
+
+        System.out.println(categoryItem);
+        System.out.println(categoryItem.getCategory().getName());
+        System.out.println(categoryItem.getItem().getName());
+
+        Category category = categoryRepository.findById(1L).get();
+
+        category.getCategoryItems().forEach(item -> System.out.println(item.getItem()));
     }
 
 }
