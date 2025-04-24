@@ -21,6 +21,7 @@ public class ToDoService {
     private final ModelMapper modelMapper;
 
     public List<ToDoDTO> list(boolean completed) {
+        // 리스트 가져오기
         List<ToDo> list = toDoRepository.findByCompleted(completed);
         // ToDo entity => ToDoDTO 변경 후 리턴
 
@@ -36,6 +37,28 @@ public class ToDoService {
                 .map(todo -> modelMapper.map(todo, ToDoDTO.class))
                 .collect(Collectors.toList());
         return todos;
+    }
+
+    // 체크박스 누르면 completed 값 변경
+    public Long changeCompleted(ToDoDTO dto) {
+        ToDo todo = toDoRepository.findById(dto.getId()).get();
+        todo.setCompleted(dto.isCompleted());
+        return toDoRepository.save(todo).getId();
+    }
+
+    public ToDoDTO read(Long id) {
+        ToDo todo = toDoRepository.findById(id).get();
+        // entity => dto 변경 후 리턴
+        return modelMapper.map(todo, ToDoDTO.class);
+    }
+
+    public void remove(Long id) {
+        toDoRepository.deleteById(id);
+    }
+
+    public Long create(ToDoDTO dto) {
+        ToDo todo = modelMapper.map(dto, ToDo.class);
+        return toDoRepository.save(todo).getId();
     }
 
 }

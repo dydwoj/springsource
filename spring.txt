@@ -486,6 +486,10 @@
                         파라메터를 보내는 방법이 다름
                             href : /member/login?id=hong
                             th:href : /member/login(id='hong')
+            
+            7. data-id : 전역속성
+                * th:attr="data-id=${dto.id}"
+                    => thymeleaf 에서 data-* 사용하는 법
 
             - 유틸리티 객체
                 thymeleaf 홈페이지의 docs 의 19번 유틸리티 부분 참고
@@ -658,3 +662,7 @@
 
     - Repository 에 원하는 메서드 만들기
         참고 : todo/ToDoRepository
+
+    - 동작의 순서
+        1. 서버주소 요청 => 컨트롤러 응답 => 서비스 => repository
+        2. repository 리턴 => 서비스 리턴 => 컨트롤러 리턴값 받기

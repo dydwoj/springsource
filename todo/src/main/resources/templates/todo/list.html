@@ -4,20 +4,35 @@
     <link rel="stylesheet" th:href="@{/css/list-groups.css}">
   </th:block>
   <div layout:fragment="content">
+    <h1 th:if="${completed}">완료 Todo</h1>
+    <h1 th:unless="${completed}">미완료 Todo</h1>
     <div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+      <div>
+        <!-- 어느때는 완료, 어느때는 미완료를 뜨게하기 위한 코드 -->
+        <a th:href="@{/todo/list(completed=false)}" class="btn btn-success" th:if="${completed}">미완료 Todo</a>
+        <a th:href="@{/todo/list(completed=true)}" class="btn btn-primary" th:unless="${completed}">완료 Todo</a>
+      </div>
       <div class="list-group">
-        <label class="list-group-item d-flex gap-3">
-          <input class="form-check-input flex-shrink-0" type="checkbox" value="" style="font-size: 1.375em" />
+        <label class="list-group-item d-flex gap-3" th:each="dto : ${todos}" th:attr="data-id=${dto.id}" >
+          <input class="form-check-input flex-shrink-0" type="checkbox" th:checked="${dto.completed}" style="font-size: 1.375em" name="completed" />
           <span class="pt-1 form-checked-content">
-            <strong>Out of office</strong>
-            <small class="d-block text-body-secondary">
+            <a th:href="@{/todo/read(id=${dto.id})}">
+              <strong th:text="${dto.content}">
+                <!-- Content -->
+              </strong>
+            </a>
+            <span class="badge text-bg-danger" th:if="${dto.importanted}">중요</span>
+            <small class="d-block text-body-secondary" >
               <svg class="bi me-1" width="1em" height="1em" role="img" aria-label="Reminder">
                 <use xlink:href="#alarm"></use>
               </svg>
-              Tomorrow
+              <!-- 작성일 -->
+               [[${#temporals.format(dto.createdDate, 'yyyy-MM-dd HH:mm:ss')}]]
             </small>
           </span>
         </label>
+
+
         <label class="list-group-item d-flex gap-3 bg-body-tertiary">
           <input
             class="form-check-input form-check-input-placeholder bg-body-tertiary flex-shrink-0 pe-none"
@@ -38,5 +53,12 @@
         </label>
       </div>
     </div>
+    <form th:action="@{/todo/modify}" method="post" id="actionForm">
+      <input type="hidden" name="id">
+      <input type="hidden" name="completed">
+    </form>
   </div>
+  <th:block layout:fragment="script">
+    <script th:src="@{/js/list.js}"></script>
+  </th:block>
 </html>
