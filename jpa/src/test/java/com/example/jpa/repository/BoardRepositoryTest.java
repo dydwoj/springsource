@@ -14,13 +14,14 @@ public class BoardRepositoryTest {
     @Autowired
     private BoardRepository boardRepository;
 
+    // crud
     @Test
     public void insertTest() {
         LongStream.rangeClosed(1, 10).forEach(i -> {
             Board board = Board.builder()
-                    .title("boardTitle test" + i)
-                    .writer("boardWriter test" + i)
-                    .content("boardContent test" + i)
+                    .title("title" + i)
+                    .writer("user" + i)
+                    .content("content" + i)
                     .build();
             boardRepository.save(board);
         });
@@ -53,6 +54,38 @@ public class BoardRepositoryTest {
     @Test
     public void deleteTest() {
         boardRepository.deleteById(11L);
+    }
+
+    // 쿼리 메서드 테스트
+    @Test
+    public void queryMethodTest() {
+        // System.out.println(boardRepository.findByWriter("boardWriter test4"));
+        // System.out.println(boardRepository.findByTitle("boardTitle test2"));
+
+        // System.out.println(boardRepository.findByWriterStartingWith("user"));// user%
+        // System.out.println(boardRepository.findByWriterEndingWith("user")); %user
+        // System.out.println(boardRepository.findByWriterContaining("user"));//%user%
+
+        // System.out.println(boardRepository.findByWriterContainingOrContentContaining("5",
+        // "9"));
+        // System.out.println(boardRepository.findByWriterContainingAndContentContaining("5",
+        // "9"));
+
+        // bno > 5
+        // System.out.println(boardRepository.findByBnoGreaterThan(5L));
+        // 내림차순 추가
+        // System.out.println(boardRepository.findByBnoGreaterThanOrderByBnoDesc(0L));
+
+        //
+        // System.out.println(boardRepository.findByBnoBetween(5L, 10L));
+
+        // ----------------------
+        // 쿼리 어노테이션
+        // ----------------------
+
+        boardRepository.findByWriterStartingWith("user").forEach(i -> System.out.println(i));
+        boardRepository.findByWriterContaining("user").forEach(i -> System.out.println(i));
+
     }
 
 }

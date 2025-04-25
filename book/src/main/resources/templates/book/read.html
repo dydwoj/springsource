@@ -6,6 +6,27 @@
   </th:block>
   <div layout:fragment="content">
     <!-- 본문 내용 -->
+    <h3>Book Specifics</h3>
+    <form>
+      <div class="mb-3">
+        <label for="code" class="form-label">Code</label>
+        <input type="text" class="form-control" id="code" name="code" th:value="${dto.code}" readonly />
+      </div>
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" th:value="${dto.title}" readonly />
+      </div>
+      <div class="mb-3">
+        <label for="author" class="form-label">Author</label>
+        <input type="text" class="form-control" id="author" name="author" th:value="${dto.author}" readonly />
+      </div>
+      <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+        <input type="text" class="form-control" id="price" name="price" th:value="${dto.price}" readonly />
+      </div>
+      <a class="btn btn-success" th:href="@{/book/list}">List</a>
+      <a class="btn btn-primary" th:href="@{/book/modify(code=${dto.code})}">Modify</a>
+    </form>
   </div>
   <th:block layout:fragment="script"></th:block>
 </html>

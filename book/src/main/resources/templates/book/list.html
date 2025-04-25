@@ -6,6 +6,27 @@
   </th:block>
   <div layout:fragment="content">
     <!-- 본문 내용 -->
+    <table class="table">
+      <tr>
+        <th scope="col">Code</th>
+        <th scope="col">Title</th>
+        <th scope="col">Author</th>
+        <th scope="col">Created Date</th>
+      </tr>
+      <tr th:each="dto : ${list}">
+        <th scope="row" th:text="${dto.code}"></th>
+        <td><a th:href="@{/book/read(code=${dto.code})}" th:text="${dto.title}"></a></td>
+        <td th:text="${dto.author}"></td>
+        <td th:text="${#temporals.format(dto.createdDate, 'yyyy-MM-dd')}"></td>
+      </tr>
+    </table>
   </div>
-  <th:block layout:fragment="script"></th:block>
+  <th:block layout:fragment="script">
+    <script>
+      const code = "[[${code}]]";
+      if (code) {
+        alert("Create Success");
+      }
+    </script>
+  </th:block>
 </html>

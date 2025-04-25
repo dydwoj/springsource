@@ -52,4 +52,19 @@ public class MemoRepositoryTest {
         memoRepository.deleteById(10L);
     }
 
+    @Test
+    public void queryTest1() {
+        memoRepository.findByMnoLessThan(5L).forEach(i -> System.out.println(i));
+    }
+
+    @Test
+    public void queryTest2() {
+        memoRepository.findByMnoLessThanOrderByMnoDesc(5L).forEach(i -> System.out.println(i));
+    }
+
+    @Test
+    public void queryTest3() {
+        memoRepository.findByMemoTextContaining("%memo%").forEach(i -> System.out.println(i));
+    }
+
 }

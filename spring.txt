@@ -15,6 +15,8 @@
         2) spring boot : spring framework 간편화 버전
 
         * log.info("{} {}") => {} : printf 와 같은 개념 => 자리만 잡아놓는다
+        * 동일한 주소(경로), 방식일 때 서버는 다운당함 => 터미널창 확인 => Caused by: java.lang.IllegalStateException: Ambiguous mapping.
+            => 위의 경우가 있는지 확인 
 
     - 프로젝트 생성 (프로그램)
         1. 빌드 툴 설정
@@ -409,7 +411,7 @@
 
                 - 메서드
                     1) addAttribute
-                        => ex) rttr.addAttribute("userid", "10"); => ?userid=10
+                        => ex) rttr.addAttribute("userid", "10"); => ?userid=10 (주소줄에 따라감)
                             => 템플릿 사용법 : ${param.userid}
                     2) addFlashAttribute
                         => ex) rttr.addFlashAttribute("password", "12"); => session 객체에 담는 것과 같은 방식
@@ -661,7 +663,55 @@
                         => 수정의 개념
 
     - Repository 에 원하는 메서드 만들기
-        참고 : todo/ToDoRepository
+        참고 : todo/ToDoRepository, jpa/BoardRepository
+
+        - 방법
+            1) 쿼리 메서드
+                참고 : jpa/BoardRepository
+                    => 사이트 : https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
+                => 규칙이 존재함 : 메서드 명을 만드는 규칙
+                => 첫 시작은 List<Entity명>
+                1. findBy컬럼명 == where 컬럼명 = ?
+
+                2. findBy컬럼명StartingWith == 컬럼명 like '?%'
+                findBy컬럼명EndingWith == 컬럼명 like '%?'
+                findBy컬럼명ContainingWith == 컬럼명 like '%?%'
+
+                3. findBy컬럼명ContainingOr컬럼명Containing == 컬럼명1 like '%?1%' or 컬럼명2 like '%?2%'
+                findBy컬럼명ContainingAnd컬럼명Containing == 컬럼명1 like '%?1%' and 컬럼명2 like '%?2%'
+
+                4. findBy컬럼명GreaterThan == 컬럼명 > ?
+
+                5. findBy컬럼명Between == where 컬럼명 between ? and ?
+
+                * 쿼리에 붙이는 추가 메서드
+                    1. + OrderBy컬럼명Desc : 컬럼명에 따른 내림차순
+                       + OrderBy컬럼명Asec
+
+            2) 쿼리 어노테이션 : 훨씬 유용함
+                => 규칙이 존재하지 않음 : 메서드명의 이름은 마음대로 가능
+                => DB의 쿼리문과 유사함
+                => 첫 시작은 List<Entity명>
+
+                * 기본 규칙
+                    1. 컬럼명 : 클래스명(첫글자 대문자) => entity 이름 기준
+                    2. ?1 => ?의 순서
+                
+                - 어노테이션
+                    1. findBy컬럼명
+                        == @Query("select * from 클래스명 b where b.컬럼명 = ?1")
+                            
+                    2. findBy컬럼명StartingWith
+                        == @Query("select b from 클래스명 b where b.컬럼명 like ?1%")
+
+                * 어노테이션을 활용한 일반적인 쿼리문 만들기
+                    => Entity 명이 아닌 sql 구문 처럼 DB단의 테이블명 이용
+                    => 사용을 잘 하지 않음
+                        방법 1)
+                            @Query(value = "select * from 테이블명 b where b.컬럼명 > ?1", nativeQuery = true)
+                        방법 2)
+                            @NativeQuery("select * from 테이블명 b where b.컬럼명 > ?1")
+
 
     - 동작의 순서
         1. 서버주소 요청 => 컨트롤러 응답 => 서비스 => repository
