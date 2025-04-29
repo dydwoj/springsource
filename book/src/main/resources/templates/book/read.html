@@ -24,8 +24,16 @@
         <label for="price" class="form-label">Price</label>
         <input type="text" class="form-control" id="price" name="price" th:value="${dto.price}" readonly />
       </div>
-      <a class="btn btn-success" th:href="@{/book/list}">List</a>
-      <a class="btn btn-primary" th:href="@{/book/modify(code=${dto.code})}">Modify</a>
+      <a
+        class="btn btn-success"
+        th:href="@{/book/list(page=${pageRequestDTO.page}, size=${pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+        >List</a
+      >
+      <a
+        class="btn btn-primary"
+        th:href="@{/book/modify(code=${dto.code}, page=${pageRequestDTO.page}, size=${pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+        >Modify</a
+      >
     </form>
   </div>
   <th:block layout:fragment="script"></th:block>

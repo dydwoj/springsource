@@ -4,9 +4,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.book.dto.BookDTO;
+import com.example.book.dto.PageRequestDTO;
+import com.example.book.dto.PageResultDTO;
 import com.example.book.entity.Book;
 import com.example.book.repository.BookRepository;
 
@@ -36,12 +42,22 @@ public class BookService {
         return modelMapper.map(book, BookDTO.class);
     }
 
-    public List<BookDTO> readAll() {
-        List<Book> list = bookRepository.findAll();
-        List<BookDTO> books = list.stream()
-                .map(book -> modelMapper.map(book, BookDTO.class))
+    public PageResultDTO<BookDTO> readAll(PageRequestDTO pageRequestDTO) {
+        // List<Book> list = bookRepository.findAll();
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(),
+                Sort.by("code").descending());
+
+        Page<Book> result = bookRepository
+                .findAll(bookRepository.makePredicate(pageRequestDTO.getType(), pageRequestDTO.getKeyword()), pageable);
+
+        List<BookDTO> books = result.get().map(book -> modelMapper.map(book, BookDTO.class))
                 .collect(Collectors.toList());
-        return books;
+        long totalCount = result.getTotalElements();
+
+        return PageResultDTO.<BookDTO>withAll()
+                .dtoList(books)
+                .totalCount(totalCount)
+                .pageRequestDTO(pageRequestDTO).build();
     }
 
     public Long modify(BookDTO dto) {

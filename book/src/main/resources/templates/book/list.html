@@ -13,13 +13,46 @@
         <th scope="col">Author</th>
         <th scope="col">Created Date</th>
       </tr>
-      <tr th:each="dto : ${list}">
+      <tr th:each="dto : ${result.dtoList}">
         <th scope="row" th:text="${dto.code}"></th>
-        <td><a th:href="@{/book/read(code=${dto.code})}" th:text="${dto.title}"></a></td>
+        <td>
+          <a
+            th:href="@{/book/read(code=${dto.code}, page=${pageRequestDTO.page}, size=${pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+            th:text="${dto.title}"
+          ></a>
+        </td>
         <td th:text="${dto.author}"></td>
         <td th:text="${#temporals.format(dto.createdDate, 'yyyy-MM-dd')}"></td>
       </tr>
     </table>
+
+    <nav aria-label="...">
+      <ul class="pagination justify-content-center">
+        <li th:class="page-item" th:if="${result.prev}">
+          <a
+            class="page-link"
+            th:href="@{list(page=${result.prevPage}, size=${result.pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+            >&laquo;</a
+          >
+        </li>
+
+        <li th:class="'page-item ' + ${result.current == page ? 'active' : ''}" th:each="page : ${result.pageNumList}">
+          <a
+            class="page-link"
+            th:href="@{list(page=${page}, size=${result.pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+            >[[${page}]]</a
+          >
+        </li>
+
+        <li class="page-item" th:if="${result.next}">
+          <a
+            class="page-link"
+            th:href="@{list(page=${result.nextPage}, size=${result.pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+            >&raquo;</a
+          >
+        </li>
+      </ul>
+    </nav>
   </div>
   <th:block layout:fragment="script">
     <script>

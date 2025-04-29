@@ -431,7 +431,8 @@
                             => name : 화면단에서 불러서 사용 (중복 금지)
 
             2. 커맨드(DTO 사용) 객체 이용 : 타입 지정 가능, 변수명은 form 요소의 name 과 일치시키기
-                => 장점 : temlate 페이지까지 입력값이 유지됨
+                => 장점 : template 페이지까지 입력값이 유지됨
+                    입력값 유지 : input:hidden => value 값 넣어주기 if. value 값이 DTO 의 값이면 th:value 형식으로 넣기
                 => 생성 규칙
                     ex. [[${command객체명?.변수명}]]
                     command 객체명 : 첫 문자만 소문자로 변환 (변수명을 사용한게 아님!, 객체명을 사용한거임!)
@@ -565,6 +566,7 @@
 
             * input 의 방식은 String 이지만 원하는 형식으로 자동 형변환을 통해서 받아올 수 있음
             * html 의 name 과 java 매핑의 변수명을 맞춰서 사용!
+            * @GetMapping() 에서 받은 값들은 동일한 경로의 @PostMapping 에서도 그대로 유지가 됨
 
             1. @GetMapping()
                 => method 가 get 인 방식끼리 연결
@@ -583,6 +585,32 @@
             @NoArgsConstructor
             @Setter
             @Getter
+
+        
+        - 페이지 DTO 만들기
+            참고 : book
+
+            - 생성 어노테이션
+                - 요청하는 DTO
+                    @NoArgsConstructor
+                    @AllArgsConstructor
+                    @Data
+                    @SuperBuilder
+
+                    - 선택에 따른 추가 생성 어노테이션
+                        @SuperBuilder : 상속관계가 있을시, 부모의 것까지 사용가능
+                            => 상속관계에서도 안전하게 사용
+                            => 서브 클래스가 이 클래스를 상속할 때, 부모필드도 함께 빌더로 생성 가능
+                    
+                    - 클래스 내 생성 어노테이션
+                        @Builder.Default : 빌더로 객체를 생성할 때, 필드가 포함 안되는 경우 사용할 기본값 지정
+                            => ex) PageRequestDTO.builder().build() 만 생성 => page = 1, size = 10
+                                => 참고 : book/PageRequestDTO
+                        @Builder : 클래스 위에 쓰지않고 생성자에 쓰는 경우 => 딱 그 생성자만 만들어서 쓸거라는 것
+                            => @Builder(builderMethodName = "withAll") : 이 생성자의 빌더 이름을 정해줌
+
+                - 결과받는 DTO
+                    @Data
 
     - 경로 설정
         http://localhost:8080/ => 고정

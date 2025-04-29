@@ -5,6 +5,10 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.example.book.entity.Book;
 
@@ -28,6 +32,7 @@ public class BookRepositoryTest {
 
     @Test
     public void testList() {
+        // 하나 조회
         bookRepository.findAll().forEach(book -> System.out.println(book));
     }
 
@@ -47,6 +52,17 @@ public class BookRepositoryTest {
     @Test
     public void testRemove() {
         bookRepository.deleteById(20L);
+    }
+
+    @Test
+    public void testList2() {
+        // 페이지 나누기
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("code").descending());
+
+        Page<Book> result = bookRepository.findAll(pageable);
+        result.getContent().forEach(i -> System.out.println(i));
+        System.out.println("전체 행 개수 : " + result.getTotalElements());
+        System.out.println("전체 페이지 개수 : " + result.getTotalPages());
     }
 
 }

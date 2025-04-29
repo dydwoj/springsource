@@ -1,4 +1,10 @@
-
+1. application.properties 수정
+2. modelMapper 라이브러리 추가
+3. thymeleaf layout dialect 추가
+4. modelmapper 사용을 위한 config 파일 작성
+5. BaseEntity 작성
+6. main 클래스 위에 @EnableJpaAuditing 추가
+7. querydsl 설정
 
 --------------------------------------------------
 ToDo 프로젝트
@@ -40,3 +46,29 @@ Book 프로젝트
                 2. 제목 : title
                 3. 저자 : author
                 4. 가격 : price
+
+--------------------------------------------------
+board 프로젝트
+
+    1) 계획
+        - 게시판
+
+    2) 구상
+        - board 테이블 (entity) = 이름 : Boardtbl
+            1. bno(pk)
+            2. title
+            3. content
+        
+        - Member 테이블 (entity) = 이름 : Board_Member
+            1. email(pk)
+            2. password
+            3. name
+
+        - Reply (entity)
+            1. rno(pk)
+            2. text
+            3. replyer
+
+    3) 관계 맺기
+        1. 한명의 멤버(1)는 여러개의 게시글(N) 작성
+        2. 하나의 게시글(1)에는 여러개의 댓글(N) 작성
