@@ -2,5 +2,54 @@
 <html lang="en" layout:decorate="~{layouts/layout}">
   <div layout:fragment="content">
     <h1>Board List</h1>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">BNO</th>
+          <th scope="col">TITLE</th>
+          <th scope="col">CREATED_DATE</th>
+          <th scope="col">NAME</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="dto : ${result.dtoList}">
+          <th scope="row" th:text="${dto.bno}"></th>
+          <td>
+            <a th:href="@{read(bno=${dto.bno})}">[[${dto.title}]]</a> ---- ( [[${dto.replyCount != null ? dto.replyCount
+            : 0}]] )
+          </td>
+          <td th:text="${#temporals.format(dto.createdDate, 'yyyy-MM-dd')}"></td>
+          <td th:text="${dto.name}"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <nav aria-label="...">
+      <ul class="pagination justify-content-center">
+        <li th:class="page-item" th:if="${result.prev}">
+          <a
+            class="page-link"
+            th:href="@{list(page=${result.prevPage}, size=${result.pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+            >&laquo;</a
+          >
+        </li>
+
+        <li th:class="'page-item ' + ${result.current == page ? 'active' : ''}" th:each="page : ${result.pageNumList}">
+          <a
+            class="page-link"
+            th:href="@{list(page=${page}, size=${result.pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+            >[[${page}]]</a
+          >
+        </li>
+
+        <li class="page-item" th:if="${result.next}">
+          <a
+            class="page-link"
+            th:href="@{list(page=${result.nextPage}, size=${result.pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+            >&raquo;</a
+          >
+        </li>
+      </ul>
+    </nav>
   </div>
 </html>

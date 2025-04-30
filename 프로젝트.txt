@@ -5,6 +5,7 @@
 5. BaseEntity 작성
 6. main 클래스 위에 @EnableJpaAuditing 추가
 7. querydsl 설정
+8. 
 
 --------------------------------------------------
 ToDo 프로젝트
@@ -52,6 +53,7 @@ board 프로젝트
 
     1) 계획
         - 게시판
+            1. 게시물 : title [댓글개수]
 
     2) 구상
         - board 테이블 (entity) = 이름 : Boardtbl

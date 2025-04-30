@@ -732,17 +732,18 @@
                         => 부모 객체에서 자식 객체를 제거(고아객체)하면서 자식객체가 제거
                     4. (cascade = { CascadeType.MERGE })
                         => 수정의 개념
+    - Pageable : 페이지 나누기
+        참고 : board/SearchRepositoryImpl
+        * 인포트 위치 : org.springframework.data.domain
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("컬럼명").descending()); => 선언 해야함
+            => pageNumber : 몇페이지를 가지고 나오는지
+            => pageSize : 한페이지에 몇개의 결과를 조회할 건지
+            => descending : 내림차순
+            => 단, querydsl 사용시, sort 불가!
 
     - Repository 에 원하는 메서드 만들기
         참고 : todo/ToDoRepository, jpa/BoardRepository, jpa/ItemRepository
                 relation/team => 조인과 관련된 심화 참고
-        
-        - Pageable : 페이지 나누기
-            * 인포트 위치 : org.springframework.data.domain
-            Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("컬럼명").descending()); => 선언 해야함
-                => pageNumber : 몇페이지를 가지고 나오는지
-                => pageSize : 한페이지에 몇개의 결과를 조회할 건지
-                => descending : 내림차순
 
         - 방법
             1) 쿼리 메서드
@@ -812,6 +813,7 @@
                 
                 - 이용방법
                     1) QuerydslPredicateExecutor : 인터페이스
+                        참고 : book/repository (테이블 1개)
                         => <Entity명> 를 extends 로 상속
                         => 간단한 곳에서 사용 편리함
                         => 조인이 불가능(left join 불가능)
@@ -833,24 +835,37 @@
                                 builder.and(item.price.gt(1000));
                                 itemRepository.findAll(builder);
 
-                        - 별도 메서드
+                        - 별도 메서드 (QuerydslPredicateExecutor 만 가능)
                             Sort.by("컬럼명") : 컬럼명을 기준으로 정렬
                                 => 1. ascending() : 오름차순
                                 => 2. descending() : 내림차순
 
-                    2) QuerydslPredicateSupport : 추상클래스
-                        참고 : mart/QueryDslOrderRepository
+                    2) QuerydslRepositorySupport : 추상클래스
+                        참고 : mart/QueryDslOrderRepositoryImpl, board/QueryDslOrderRepositoryImpl (테이블 3개)
                             => 다시 복습 필요
                         => 확장성 제공
                         => 조인 가능 (중요!!!!!!!!!!!!!!!!!!!!!!!)
                         => FROM 절에서 뽑아내지 못하고 SELECT 절에서 밖에 뽑을 수가 없음
+                        => select 절 두개를 뽑으면 무조건 List 안에 Object[]로 받아야 함
+                        => Sort 객체의 사용이 불가 => Sort 직접 제작
 
                         - 메서드
                             1) fetch() : 리스트 조회, 데이터 없는 경우 빈리스트 반환
                             2) fetchFirst() : limit(1), fect one()
                             3) fetchOne() : 결과가 없으면 null, 둘 이상이면 NonUniqueException
                             4) fetchResults() : 페이징 정보 포함, total count 쿼리 추가 실행
-                            5) fetchCount() : count 쿼리로 변경해서 count 수 주회
+                            5) fetchCount() : count 쿼리로 변경해서 count 수 조회
+                                => 전체 개수 조회
+
+                        - 필요 구문
+                            1) JPQLQuery<E> : query문 작성을 위한 객체
+                            2) JPAExpressions : 서브쿼리문 작성을 위한 시작 객체
+                            3) Tuple : 쿼리문의 결과값의 행 하나를 담는 객체
+                                => List<Tuple> 로 가져가지 않고 stream.map() 을 통해서 List<Object[]> 로 변환해서 반환함
+                                    => 단 해당 객체는 Pageable 을 사용할 수가 없음
+                        
+                        - Sort 재정의
+                            참고 : board/SearchBoardRepository
                     
     - 전체적인 웹과 DB와 백의 동작의 순서
         1. 서버주소 요청 => 컨트롤러 응답 => 서비스 => repository
