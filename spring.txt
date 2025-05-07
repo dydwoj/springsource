@@ -388,6 +388,28 @@
                                 - 요청 경로 설정
                                     1) void : 같은 페이지에서 결과값을 도출하면 void로 해도 상관 없음
                                     2) String : 같은 페이지가 아닌 다른 페이지에 결과값을 도출하기 원하면 String 으로 해서 return 페이지를 띄워야 함
+                    
+                    - 번외
+                        참고 : rest, frontend/htmlsource/js
+
+                        @RestController : templates 의 html 을 찾지 않고 return 값을 찍어줌
+                            => json 의 형태로 자료만 뿌려주는 구조
+
+                            - 매핑 방식
+                                1. @GetMapping : read
+                                2. @PostMapping : create
+                                3. @Put/PatchMapping : update
+                                4. @DeleteMapping : delete
+                            
+                            - 어노테이션
+                                @RequestBody : 데이터가 json 으로 올 것이라는 것을 알려주는 어노테이션
+                                @ResponseBody : 
+                                @PathVariable : 뒤에 오는 변수가 주소줄의 경로에 맞춰서 갈때 사용
+                                    참고 : rest/memoController
+                                    ex. remove 단 => @DeleteMapping("/remove/{mno}")
+                                        매개변수 => @PathVariable Long mno
+                                            => 주소줄 : http://localhost:8080/memo/remove/3
+                                @ResponseEntity
 
         4) 내장 서버 : Tomcat(원래는 설치 후 사용 - 스프링부트를 사용한다면 내장되어 있음)
             => htttp://localhost:8080/ => Tomcat 서버 구동시, 기본 경로
@@ -677,6 +699,7 @@
                             => 해결법
                                 1. @Transactional : SELECT 구문 2개로 처리 (left join 처리)
                                     => 주가 되는 관계가 누구인지 지정
+                                    => 두개의 테이블 접근을 한꺼번에 처리하는 방식
                                 2. FetchType 변경
                                     => @OneToMany(fetch = FetchType.EAGER)
                                         * EAGER : 즉시의 의미
@@ -785,6 +808,8 @@
                             1. ?1
                             2. :필드명(변수명)
                         * @Param("컬럼명") : 정확하게 넘어오는 요소를 어떤 변수에 집어넣는지 알려줄 수 있음
+                    3. @Modifying : Delete, Update 시에는 무조건 사용
+                        => 만든 쿼리메서드 위에 붙여서 작성
 
                 - 어노테이션
                     1. findBy컬럼명

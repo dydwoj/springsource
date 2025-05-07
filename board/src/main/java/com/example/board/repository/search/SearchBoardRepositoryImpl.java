@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -13,6 +14,7 @@ import com.example.board.entity.Board;
 import com.example.board.entity.QBoard;
 import com.example.board.entity.QMember;
 import com.example.board.entity.QReply;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -30,10 +32,10 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
     }
 
     @Override
-    public Page<Object[]> list(Pageable pageable) {
+    public Page<Object[]> list(String type, String keyword, Pageable pageable) {
         log.info("SearchBoard");
 
-        // DBeaver/c##java/164번째 줄과 비교하기
+        // DBeaver/c##java/164번째 줄과 쿼리문 비교하기
         QBoard board = QBoard.board;
         QMember member = QMember.member;
         QReply reply = QReply.reply;
@@ -52,8 +54,28 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
         JPQLQuery<Tuple> tuple = query.select(board, member, replyCount);
 
         log.info("============================");
-        log.info(tuple);
+        log.info(query);
         log.info("============================");
+
+        // ============================== 검색 기능 추가 ===============================
+        // bno > 0
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(board.bno.gt(0L));
+
+        if (type != null) {
+            BooleanBuilder builder = new BooleanBuilder();
+            if (type.contains("t")) {
+                builder.or(board.title.contains(keyword));
+            }
+            if (type.contains("c")) {
+                builder.or(board.content.contains(keyword));
+            }
+            if (type.contains("w")) {
+                builder.or(board.member.name.contains(keyword));
+            }
+            booleanBuilder.and(builder);
+        }
+        tuple.where(booleanBuilder);
 
         // ============================================================================
         // Sort 생성

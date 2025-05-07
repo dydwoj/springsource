@@ -1,8 +1,10 @@
  << Validation >>
+    참고 : board, 
     => 유효성 검증 (form validation)
     => 사용자가 입력한 데이터에 대해서 사전 검증하는 작업
     => 입력값을 받는 컨트롤러 단에서 처리
     => 자주 사용하는 유효성에 대한 검사를 도와주는 프레임워크(hibernate validation) 사용 => 어노테이션을 통해 검증
+    => porm.xml 에 dependency 안에 validation 이 있는지 확인
 
     - 어노테이션 및 태그
         - 컨트롤러단
