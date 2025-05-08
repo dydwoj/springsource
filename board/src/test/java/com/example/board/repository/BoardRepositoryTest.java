@@ -1,6 +1,7 @@
 package com.example.board.repository;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
@@ -114,6 +115,14 @@ public class BoardRepositoryTest {
     public void rowTest() {
         Object[] result = boardRepository.getBoardByBno(4L);
         System.out.println(Arrays.toString(result));
+    }
+
+    @Test
+    public void listReplyTest() {
+        Board board = Board.builder().bno(100L).build();
+        List<Reply> list = replyRepository.findByBoardOrderByRno(board);
+
+        System.out.println(list);
     }
 
 }

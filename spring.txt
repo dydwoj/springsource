@@ -342,6 +342,7 @@
         3) 경로 임의로 생성
             ex) http://localhost:8080/ ==> Controller 파일의 메서드와 매핑
             * getMapping("/") => / 는 8080의미
+                => 포트번호 변경 : application.properties 에서 server.port=바꾸고 싶은 번호
 
             1. uri 설계
                 ex) 게시판 개발
@@ -356,6 +357,7 @@
                 - 어노테이션 생성
                     -기본
                         1. @Controller : new Controller 의 개념
+                            => 동기식 : 데이터/페이지 같이 만들어서 클라이언트한테 보내는 방식
                         2. @Log4j2 : log 확인
                         3. @RequestMapping("중복되는 값")
                             => @GetMapping() 의 리턴타입을 Stirng -> void로 변경
@@ -393,23 +395,55 @@
                         참고 : rest, frontend/htmlsource/js
 
                         @RestController : templates 의 html 을 찾지 않고 return 값을 찍어줌
-                            => json 의 형태로 자료만 뿌려주는 구조
+                            => 비동기식 : 데이터만 클라이언트한테 보내주는 방식 (ajax 와 함께 참고 : frontend/js)
+                            => 참고로 우리는 json 을 활용해서 함
+                            => 화면까지 만들어주는게 아닌 데이터만 뿌려주는 역할 (영화진흥위원회 API 같은 것을 만드는 것)
 
                             - 매핑 방식
+                                참고 : frontend/js/memo
                                 1. @GetMapping : read
                                 2. @PostMapping : create
                                 3. @Put/PatchMapping : update
                                 4. @DeleteMapping : delete
                             
                             - 어노테이션
-                                @RequestBody : 데이터가 json 으로 올 것이라는 것을 알려주는 어노테이션
-                                @ResponseBody : 
+                                @RequestBody : 넘어오는 데이터를 json => 자바 객체 연동
+                                @ResponseBody : 데이터만 내보내기
+                                    => 컨트롤러에서 리턴하는 값은 데이터 라는 의미
+                                    => 템플릿을 찾지 말라는 어노테이션
                                 @PathVariable : 뒤에 오는 변수가 주소줄의 경로에 맞춰서 갈때 사용
+                                    => 경로에 들어있는 값 변수에 담기
                                     참고 : rest/memoController
                                     ex. remove 단 => @DeleteMapping("/remove/{mno}")
                                         매개변수 => @PathVariable Long mno
                                             => 주소줄 : http://localhost:8080/memo/remove/3
-                                @ResponseEntity
+                            - 객체
+                                1) ResponseEntity<T> : 데이터만 내보내기
+                                    => data + 상태코드
+                        
+                        - 에러
+                            1) CORS (Cross Origin Resource Sharing)
+                                => 요청 서버 (localhost:8080)
+                                => 응답 클라이언트 : localhost:5050
+                                    => 요청과 응답의 서버가 다르면 막는 에러
+                                
+                                - 해결
+                                    참고 : rest/config/CustomServletConfig
+                                    => 서버단에서 해결함
+
+                                    @Configuration
+                                    public class CustomServletConfig implements WebMvcConfigurer {
+                                        @Override
+                                        public void addCorsMappings(CorsRegistry registry) {
+                                            registry.addMapping("/**") => 어느곳에서 오든지 간에
+                                                    .allowedOrigins("*") => 오픈하겠다
+                                                    .allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE")
+                                                    .maxAge(300)
+                                                    .allowedHeaders("Authorization", "Cache-Control", "Content-Type");
+                                        }
+                                    }
+                    - Rest + 일반 컨트롤러
+                        => 일반 컨트롤러에 @ResponseBody or ResponseEntity
 
         4) 내장 서버 : Tomcat(원래는 설치 후 사용 - 스프링부트를 사용한다면 내장되어 있음)
             => htttp://localhost:8080/ => Tomcat 서버 구동시, 기본 경로
@@ -426,7 +460,8 @@
                 1. 404 : 주소 not found => 컨트롤러 경로 확인
                 2. 405 : 허용되지 않은 메서드를 사용하려고 시도한 경우 => 컨트롤러 경로 + 매핑방식 확인
             500번대 : 서버쪽 에러
-                => 터미널 확인 : TemplateInputException
+                => (서버) 터미널 확인 : TemplateInputException
+            js 수정 : 브라우저 콘솔 확인
 
             * 매핑 방식
 
