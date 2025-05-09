@@ -1,6 +1,9 @@
 // 댓글 삭제
 // 삭제 버튼 클릭시 rno 가져오기
 
+const replyForm = document.querySelector("#replyForm");
+const replyListElement = document.querySelector(".replyList");
+
 // ======================================================================
 // 날짜 포멧 함수
 const formatDate = (str) => {
@@ -25,7 +28,17 @@ const replyList = () => {
   axios.get(`/replies/board/${bno}`).then((res) => {
     console.log(res.data);
     const data = res.data;
+    console.log("댓글 수 : ", data.length);
 
+    // ======================================================================
+    // 댓글 개수 수정
+
+    // 내꺼
+    document.querySelector("h5 > span").innerHTML = data.length;
+
+    // 강사님 꺼
+    // replyListElement.previousElementSibling.querySelector("span").innerHTML = data.length
+    // ======================================================================
     let result = "";
     data.forEach((reply) => {
       result += `<div class="d-flex justify-content-between my-2 border-bottom reply-row" data-rno=${reply.rno}>`;
@@ -40,7 +53,7 @@ const replyList = () => {
       result += `<div><button class="btn btn-outline-success btn-sm">수정</button></div>`;
       result += `</div></div>`;
     });
-    document.querySelector(".replyList").innerHTML = result;
+    replyListElement.innerHTML = result;
   });
 };
 
@@ -55,7 +68,7 @@ document.querySelector(".replyList").addEventListener("click", (e) => {
   // 삭제 or 수정 ?
   if (btn.classList.contains("btn-outline-danger")) {
     // 삭제
-    if (!confirm("Are you Sure, Delete it?")) return;
+    if (!confirm("Are you Sure, delete it?")) return;
     axios.delete(`/replies/${rno}`).then((res) => {
       console.log(res.data);
       replyList();
@@ -63,8 +76,64 @@ document.querySelector(".replyList").addEventListener("click", (e) => {
     // 삭제 성공시 댓글 리로딩
   } else if (btn.classList.contains("btn-outline-success")) {
     // 수정
-    // axios.put(`/replies/${rno}`).then();
-    // confirm("Your reply is modified");
+    axios.get(`/replies/${rno}`).then((res) => {
+      console.log(res.data);
+      const data = res.data;
+
+      // replyForm 안에 보여주기
+      replyForm.rno.value = data.rno;
+      replyForm.replyer.value = data.replyer;
+      replyForm.text.value = data.text;
+    });
+  }
+});
+
+// ======================================================================
+// 폼 submit => 수정 + 삽입
+replyForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const rno = form.rno.value;
+
+  if (form.rno.value) {
+    // 수정
+    axios
+      .put(`/replies/${rno}`, form, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        alert("Your comment is updated");
+
+        // form 기존 내용 지우기
+        replyForm.rno.value = "";
+        replyForm.replyer.value = "";
+        replyForm.text.value = "";
+        // 수정 내용 반영
+        replyList();
+      });
+  } else {
+    // 삽입
+    axios
+      .post(`/replies/new`, form, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        alert("Your comment is created");
+
+        // form 기존 내용 지우기
+        replyForm.rno.value = "";
+        replyForm.replyer.value = "";
+        replyForm.text.value = "";
+
+        // 삽입 내용 반영
+        replyList();
+      });
   }
 });
 

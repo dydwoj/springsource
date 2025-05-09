@@ -1,0 +1,84 @@
+<< Spring Security >>
+    참고 : security
+    => security 라이브러리 추가 => localhost 접속시 로그인 화면이 자동으로 나옴
+        => 개발시 가장 마지막에 추가하는게 좋음
+
+    - 정의
+        ● 현재 프로젝트는 시큐리티 설정에 의해 움직임
+            => 로그인 정보 없이는 모든 페이지 접근 불가
+        ● Security 는 filter 를 통과해야 컨트롤러로 넘어가게 작동함
+
+        - 사용자
+            => default 아이디 : user
+            => 패스워드 : 터미널에서 16진수로 패스워드 자동 생성함
+
+            1. 익명사용자(Anonymous User)
+            2. 인증사용자(Authentication User) => 로그인 후 생성
+            3. username : 페이지에서 사용하는 아이디임
+            
+    
+    - 시큐리티 설정 (config 설정)
+        참고 : SecurityConfig
+
+        * @Bean : new 해서 객체 생성 후 스프링 컨테이너가 관리
+        
+        - 클래스 어노테이션
+            1. @EnableWebSecurity : 시큐리티 설정 선언
+            2. @Configuration : 환경설정 파일임을 선언
+    
+        - 비밀번호 암호화
+            => 단방향 암호화 : 한번 암호화를 하면 원 비밀번호를 찾을 수 없음
+                => 그래서 우리가 비밀번호 찾기를 할 때, 비밀번호를 찾아서 알려주는게 아닌 새로운 비밀번호 설정으로 유도함
+                * 양방향 암호화를 해야 해독해서 찾을 수 있음
+
+            - 객체
+                1) PasswordEncoder : 비밀번호를 암호화 할 수 있게 해주는 객체
+                    - 메서드
+                        1. encode(원비밀번호) : 원비밀번호를 암호화 해줌
+                        2. matches("원비밀번호", 암호화된 코드) : 사용자의 비밀번호 입력값과 DB의 암호화된 비밀번호 비교 코드
+                2) PasswordEncoderFactories
+                3) HttpSecurity
+                    - 메서드
+                        1. .requestMatchers("주소") : 들어가지는 주소 (, 로 다른 주소 추가 가능)
+                            + .permitAll() : 권한과 상관없이 들어감
+                            + .hasRole("") : 권한이 있는지 없는지 판독
+                        2. .anyRequest() : 어떤 요청이건
+                        
+    - 로그인 페이지
+        참고 : member/login, security/ClubAuthMemberDTO, ClubMemberDetailsService
+
+        * id 에 해당하는 요소의 이름은 반드시 username (변경가능)
+
+        - 로그인 페이지 설정
+            => 컨트롤러단에서 로그인 post 는 만들지 않음 => 시큐리티가 처리
+                => but. 로그인 처리를 위한 Service 는 작성해야 함
+                    => 인터페이스인 UserDetailsService 를 구현해야 함
+
+            - 로그인 처리 과정
+                사용자가 입력 => Service => Repository
+                    => 컨트롤러단(PostMapping) 생략
+
+            - csrf
+                ● action 주소를 써주면 thymeleaf 에서 input:hidden 으로 csrf가 들어감
+                    => 이것은 get 을 제외한 모든 방법(post, put, delete)은 csrf 토큰을 요구함 (csrf 공격을 방어하기 위해서)
+                ● 타임리프에서는 action 에 경로설정을 하면 csrf 토큰을 넣어줌
+            
+            - 관련 메서드
+                1) .formLogin(Customizer.withDefaults());
+                    => 시큐리티가 제공하는 default 로그인 페이지
+                2) .formLogin(login -> login.loginPage("경로").permitAll());
+                    => 개발자가 만든 경로로 로그인 페이지 지정
+                    + defaultSuccessUrl("경로") : 로그인 성공 후 이동하는 경로 지정
+                        => 지정되지 않을 경우 이전 url 로 되돌아감
+            
+            - 관련 객체
+                1) SecurityContextHolder : 로그인 성공시, 저장되는 장소
+                    => json 의 형태로 저장함
+        
+        - 로그아웃 페이지 설정
+
+            - 관련 메서드
+                1) .logout(화살표 함수 사용)
+                    + .logoutRequestMatcher(new AntPathRequestMatcher("경로"))
+                    + .logoutSuccessUrl("/") : 로그아웃 성공 후 이동하는 경로 지정
+            

@@ -334,6 +334,7 @@
                 @Autowired => 필요한 객체 위에 작성
                     => 컨테이너가 관리하는 객체를 주입해주세요의 의미
                     => @Service 가 붙은 객체를 new 의 개념으로 가지고 있음
+                    => nullPointerException 안나게 해줌
 
                     @Autowired                            == 클래스에 @RequiredArgsConstructor
                     private MemoRepository memoRepository == private final MemoService memoService
@@ -459,6 +460,7 @@
             400번대
                 1. 404 : 주소 not found => 컨트롤러 경로 확인
                 2. 405 : 허용되지 않은 메서드를 사용하려고 시도한 경우 => 컨트롤러 경로 + 매핑방식 확인
+                3. 403 : 해당 페이지에 접근할 수 있는 권한이 없음
             500번대 : 서버쪽 에러
                 => (서버) 터미널 확인 : TemplateInputException
             js 수정 : 브라우저 콘솔 확인
@@ -735,6 +737,16 @@
                                 1. @Transactional : SELECT 구문 2개로 처리 (left join 처리)
                                     => 주가 되는 관계가 누구인지 지정
                                     => 두개의 테이블 접근을 한꺼번에 처리하는 방식
+
+                                    - SELECT 구문 2개로 처리 => 조인 구문으로 처리
+                                        1. 쿼리메서드 작성
+                                        2. @EntityGraph 어노테이션 선언
+                                            => LEFT JOIN을 걸어서 가지고 나오게 하는 방법
+                                            - 사용법
+                                                @EntityGraph(attributePaths = { "해당변수명" }, type = EntityGraphType.LOAD)
+                                                    => attributePaths : 조인으로 처리할 대상
+                                                    => type = EntityGraphType.LOAD : 로드 할 때
+
                                 2. FetchType 변경
                                     => @OneToMany(fetch = FetchType.EAGER)
                                         * EAGER : 즉시의 의미

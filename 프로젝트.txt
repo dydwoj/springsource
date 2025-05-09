@@ -1,3 +1,14 @@
+< 라이브러리 작업>
+    1. spring Web
+    2. orcle driver
+    3. data jpa
+    4. thymeleaf
+    5. devtools
+    6. lombok
+    7. validation
+    + 8. security
+
+< 기본 작업 >
 1. application.properties 수정
 2. modelMapper 라이브러리 추가
 3. thymeleaf layout dialect 추가
