@@ -2,7 +2,6 @@ package com.example.board.dto;
 
 import java.time.LocalDateTime;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,8 +28,6 @@ public class BoardDTO {
     private LocalDateTime updatedDate;
 
     // Member
-    @Email(message = "check your email")
-    @NotBlank(message = "please, insert your email")
     private String email;
     private String name;
 

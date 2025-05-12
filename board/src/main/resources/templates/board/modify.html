@@ -2,7 +2,7 @@
 <html lang="en" layout:decorate="~{layouts/layout}">
   <div layout:fragment="content">
     <h1>Board Modify</h1>
-    <form method="post">
+    <form method="post" th:action="@{/board/modify}">
       <div class="mb-3">
         <label for="bno" class="form-label">Number</label>
         <input type="text" class="form-control" id="bno" name="bno" th:value="${dto.bno}" readonly />
@@ -19,7 +19,8 @@
         <label for="name" class="form-label">Writer</label>
         <input type="text" class="form-control" id="name" name="name" th:value="${dto.name}" readonly />
       </div>
-      <button type="submit" class="btn btn-primary">Modify</button>
+      <input type="hidden" class="form-control" id="email" name="email" th:value="${#authentication.name}" />
+      <button type="submit" class="btn btn-primary" th:if="${#authentication.name} == ${dto.email}">Modify</button>
       <a
         class="btn btn-success"
         th:href="@{list(page=${pageRequestDTO.page}, size=${pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"

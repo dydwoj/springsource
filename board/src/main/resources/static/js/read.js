@@ -45,7 +45,7 @@ const replyList = () => {
       result += `<div class="p-3">`;
       result += `<img src="/img/default.png" alt="" class="rounded-circle mx-auto d-block" style="width: 60px; height: 60px" /></div>`;
       result += `<div class="flex-grow-1 align-self-center">`;
-      result += `<div>${reply.replyer}</div>`;
+      result += `<div>${reply.replyerName}</div>`;
       result += `<div><span class="fs-5">${reply.text}</span></div>`;
       result += `<div class="text-muted"><span class="small">${formatDate(reply.createdDate)}</span></div></div>`;
       result += `<div class="d-flex flex-column align-self-center">`;

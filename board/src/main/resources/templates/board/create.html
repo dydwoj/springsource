@@ -4,7 +4,7 @@
     <h1>Board Create</h1>
     <!-- type : email, search, url, tel => 자동 검증 해줌 
         novalidate : 자동검증 안하게 막음  -->
-    <form method="post" th:object="${dto}" novalidate>
+    <form method="post" th:object="${dto}" th:action="@{/board/create}" novalidate>
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input type="text" class="form-control" id="title" name="title" th:value="${dto.title}" />
@@ -16,13 +16,19 @@
         <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-danger"></div>
       </div>
       <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="text" class="form-control" id="email" name="email" th:value="${dto.email}" />
-        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
+        <label for="email" class="form-label"></label>
+        <input type="hidden" class="form-control" id="email" name="email" th:value="${#authentication.name}" />
       </div>
       <div class="mb-3">
         <label for="name" class="form-label">Writer</label>
-        <input type="text" class="form-control" id="name" name="name" th:value="${dto.name}" />
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          th:value="${#authentication.principal.name}"
+          readonly
+        />
         <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></div>
       </div>
       <button type="submit" class="btn btn-primary">Create</button>
