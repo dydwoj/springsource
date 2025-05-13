@@ -66,6 +66,8 @@
                     
                     - 컨트롤러 단
                         @PreAuthorize("permitAll()")
+                            => 로그인 사용자와 작성자가 같음? 할 때 사용함
+            
                         
     - 로그인 페이지
         참고 : member/login, security/ClubAuthMemberDTO, ClubMemberDetailsService
@@ -118,5 +120,29 @@
                     1) 소셜 로그인 -> 우리꺼 회원가입
                     2) 소셜 로그인 -> 임의의 테이블로 저장
                     
+    - thymeleaf security 표현하기
 
-                    
+        ● value = ${Authentication.principal.name}
+        ● sec:authentication="name" : id 가져오기
+            => "" 안에 principal.authorities : 권한 가져오기
+            => ${} 안에 표현하거나 sec:authentication 으로 바로 찍을 수도 있음
+        ● sec:authorize="isAuthenticated()"
+        ● sec:authorize="hasRole('ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMIN')"
+            1. hasAnyRole() : Role 여러개 중 하나만 만족한다면
+            2. has Role() : Role 하나만 작성하고 그 Role 만족한다면
+
+        - 경로 허용 범위
+
+            - config 단에서 제어
+                1) 경로를 작성하여 열기
+                    .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/css/**", "/js/**", "/img/**", "/assets/**").permitAll())
+
+                2) 모든 요청 인증 받기
+                    => 작성한 경로 외에는 모두 로그인이 필요함 (컨트롤러 갈 수 없음)
+                    .anyRequest().authenticated()
+
+            - 컨트롤러 메서드 단에서 제어
+                1) .anyRequest().permitAll() : 모든 경로 열기
+                2) @PreAuthorize("isAuthenticated()")
+                    => 컨트롤러에 선언

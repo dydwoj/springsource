@@ -29,6 +29,7 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/list")
     public void getList(Model model, PageRequestDTO pageRequestDTO) {
         log.info("list 요청 {}", pageRequestDTO);
@@ -60,8 +61,9 @@ public class BoardController {
         return "redirect:/board/read";
     }
 
-    @GetMapping({ "/remove" })
-    public String getDelete(Long bno, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
+    @PreAuthorize("authentication.name == #email")
+    @PostMapping({ "/remove" })
+    public String getDelete(Long bno, String email, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
         log.info("remove 요청 / get {}", bno);
 
         // 삭제
