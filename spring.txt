@@ -849,6 +849,7 @@
                             => Entity : List<Entity명>
                         ex. @Query("select b.title, b.writer from Board b where b.title like ?1%")
                             => Object 배열 : List<Object[]>
+                            * return 이 2개 이상이면 Object[] 배열로 받아옴
 
                 * 기본 규칙
                     1. 컬럼명 : 클래스명(첫글자 대문자) => entity 이름 기준
