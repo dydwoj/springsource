@@ -14,7 +14,7 @@
               <th class="px-4 py-3">Movie Title</th>
               <th class="px-4 py-3">Reviews</th>
               <th class="px-4 py-3">Grade</th>
-              <th class="px-4 py-3">Released Date</th>
+              <th class="px-4 py-3">Release Date</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
@@ -33,7 +33,12 @@
                     <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                   </div>
                   <div>
-                    <p class="font-semibold"><a href="" th:text="${movie.title}"></a></p>
+                    <p class="font-semibold">
+                      <a
+                        th:href="@{/movie/read(mno=${movie.mno}, page=${pageRequestDTO.page}, size=${result.pageRequestDTO.size}, type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}"
+                        th:text="${movie.title}"
+                      ></a>
+                    </p>
                   </div>
                 </div>
               </td>

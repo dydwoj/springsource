@@ -121,6 +121,14 @@
                             </execution>
                         </executions>
                         </plugin>
+
+                6) Thumbnailator
+                    => 이미지 원본을 썸네일로 저장하는 라이브러리
+                    <dependency>
+                        <groupId>net.coobird</groupId>
+                        <artifactId>thumbnailator</artifactId>
+                        <version>0.4.20</version>
+                    </dependency>
         8. config 파일 src.main.java.com.example.프로젝트명 => 폴더째로 붙여넣기
 
         9. BaseEntity 작성
@@ -945,3 +953,5 @@
     - 전체적인 웹과 DB와 백의 동작의 순서
         1. 서버주소 요청 => 컨트롤러 응답 => 서비스 => repository
         2. repository 리턴 => 서비스 리턴 => 컨트롤러 리턴값 받기
+
+    

@@ -18,7 +18,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-@ToString(exclude = "moive")
+@ToString(exclude = "movie")
 
 @Entity
 public class MovieImage {
@@ -33,6 +33,6 @@ public class MovieImage {
     private int ord;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Movie moive;
+    private Movie movie;
 
 }

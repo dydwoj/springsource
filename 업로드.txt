@@ -1,0 +1,176 @@
+- 업로드
+        참고 : movie, movie/upload
+
+    * 네트워크는 기본적으로 headers 정보를 담아서 움직임
+        => HttpHeaders : headers 에 정보를 담을 때 쓰는 객체
+    
+    * image = byte 임 (1010)
+
+        - 이미지 저장법
+            1) 클라우드
+                => 돈내고 사용해야 함
+
+            2) local
+                - 구분 (폴더)
+                    1. 년/월/일
+                    2. uuid 붙여서 사용
+
+        - 이미지 업로드
+            1) input 타입 : file
+               * multiple : 여러개의 파일을 선택할 수 있게 해줌
+               * 파일이 들어간 form 은 submit 이 안됨! (컨트롤러로)
+            2) form 
+                enctype : 보내주는 타입
+                    기본 : application/x-www-form-urlencoded
+                    파일이 들어간 경우 : multipart/form-data
+                    + application.properties 환경 설정
+                
+            - 객체
+                1) MultipartFile : 서버 도착
+                    => 여러개 전송일 시 [] 로 받고, 하나일 시 [] 선언 안해도 됨
+
+            - 서버에 도착한 파일 저장
+
+                - 폴더 생성 메서드
+                    private String makeFolder() {
+                        String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                            => 오늘 날짜 ex) 2025/05/25 로 변경
+                        String folderPath = dateStr.replace("/", File.separator);
+                            => File.separator : "/" 가 운영체재에 맞춰서 폴더를 구별하는 파일구분기호(/ or \)로 변경
+
+                        File uploadPathFolder = new File(uploadPath, folderPath);
+                        if (!uploadPathFolder.exists())
+                                => 디렉토리 존재하지 않다면
+                            uploadPathFolder.mkdirs();
+                                => 디렉토리 생성
+                        return folderPath;
+                    }
+                
+                - 컨트롤러단
+                    참고 : movie/controller/UploadController.java
+
+                    @Value("${com.example.movie.upload.path}")
+                    private String uploadPath;
+                        => application.properties 에 작성한 값 불러오기
+
+                    @PostMapping("/files")
+                    public void postUpload(MultipartFile[] uploadFiles) {
+                        for (MultipartFile uploadFile : uploadFiles) {
+
+                            if (!uploadFile.getContentType().startsWith("image")) {
+                                return;
+                                => 타입이 image 가 아니면 리턴
+                            }
+
+                            ===== 첨부파일이 이미지라면 =====
+                            String oriName = uploadFile.getOriginalFilename();
+                                => 첨부파일명 가져오기
+                            String saveFolderPath = makeFolder();
+                                => 디렉토리(폴더) 생성
+
+                            String uuid = UUID.randomUUID().toString();
+                                => UUID : 고유 식별자 생성 (중복 안되게)
+                            String saveName = uploadPath + File.separator + saveFolderPath + File.separator + uuid + "_" + oriName;
+                                => uploadPath : upload 라는 폴더
+                                => saveFolderPath : 2025/05/15
+                                => uuid : uuid 고유명
+                                => oriName : 파일명
+                                    => upload/2025/05/15/uuid명_파일명.jpg
+                            Path savePath = Paths.get(saveName);
+                                => 위의 String 을 Path 구조로 변경
+
+                            try {
+                                uploadFile.transferTo(savePath);
+                                    => 서버의 특정폴더에 저장해주는 구문
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    => DTO 로 넘기기 위해서 변형
+
+                        @PostMapping("/files")
+                        public ResponseEntity<List<UploadResultDTO>> postUpload(MultipartFile[] uploadFiles) {
+                            => ResponseEntity 사용
+
+                            List<UploadResultDTO> uploadResultDTOs = new ArrayList<>();
+                                => 빈 공간으로 리스트 준비
+
+                            for (MultipartFile uploadFile : uploadFiles) {
+                                // String fileName = oriName.substring(oriName.lastIndexOf("\\") + 1);
+                                // log.info("oriName : {}", oriName);
+                                // log.info("fileName : {}", fileName);
+                                if (!uploadFile.getContentType().startsWith("image")) {
+                                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                                }
+
+                                String oriName = uploadFile.getOriginalFilename();
+                                String saveFolderPath = makeFolder();
+
+                                String uuid = UUID.randomUUID().toString();
+                                String saveName = uploadPath + File.separator + saveFolderPath + File.separator + uuid + "_" + oriName;
+                                Path savePath = Paths.get(saveName);
+
+                                try {
+                                    uploadFile.transferTo(savePath);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                uploadResultDTOs.add(new UploadResultDTO(saveName, uuid, saveFolderPath));
+                                    => 리스트에 추가
+                            }
+                            return new ResponseEntity<>(uploadResultDTOs, HttpStatus.OK);
+                                => 추가한 데이터들을 보냄
+                        }
+
+                        @GetMapping("/display")
+                        public ResponseEntity<byte[]> getMethodName(String fileName) {
+                            ResponseEntity<byte[]> result = null;
+                            try {
+                                String srcFileName = URLDecoder.decode(fileName, "utf-8");
+                                File file = new File(uploadPath + File.separator + srcFileName);
+
+                                HttpHeaders headers = new org.springframework.http.HttpHeaders();
+                                headers.add("Content-Type", Files.probeContentType(file.toPath()));
+                                result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                            }
+                            return result;
+                        }
+
+                - DTO 단
+                    참고 : movie/dto/UploadResultDTO.java
+                    => 저장한 사진들을 화면에 뿌리기 위해서 사용
+
+                    - encode & decode
+                        encode : url 을 따라갈 때 특수문자나 한글 등을 변환해서 보냄
+                        decode : 인코딩 된 경로를 원래의 경로로 다시 변환해서 원본을 보냄
+
+                    public String getImageURL() {
+                        String fullPath = "";
+
+                        // encode :
+
+                        try {
+                            fullPath = URLEncoder.encode(folderPath + "/" + uuid + "_" + fileName, "utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+
+                        return fullPath;
+                    }
+                    => get 빼고 ImageURL 로 가지고 옴 (호출을 안헀음에도)
+
+        - application.properties 설정
+            참고 : movie/application.properties
+
+                spring.servlet.multipart.enabled=true
+                spring.servlet.multipart.max-file-size=10MB
+                    => 파일 하나당 용량 : 10MB
+                spring.servlet.multipart.max-request-size=30MB
+                    => 전체 파일의 용량 : 30MB
+
+                com.example.movie.upload.path=upload
