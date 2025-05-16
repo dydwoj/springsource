@@ -1,6 +1,7 @@
 package com.example.movie.controller;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -79,13 +80,18 @@ public class UploadController {
     }
 
     @GetMapping("/display")
-    public ResponseEntity<byte[]> getMethodName(String fileName) {
+    public ResponseEntity<byte[]> getMethodName(String fileName, String size) {
         ResponseEntity<byte[]> result = null;
         try {
             String srcFileName = URLDecoder.decode(fileName, "utf-8");
             // => 디코드 해서 원래 파일명으로 가져옴
             File file = new File(uploadPath + File.separator + srcFileName);
             // => upload 있어야 해서 붙임
+
+            if (size != null && size.equals("1")) {
+                // s_ 제거
+                file = new File(file.getParent(), file.getName().substring(2));
+            }
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", Files.probeContentType(file.toPath()));
@@ -97,6 +103,29 @@ public class UploadController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return result;
+    }
+
+    @PostMapping("/removeFile")
+    public ResponseEntity<String> postMethodName(String fileName) {
+        log.info("파일 삭제 요청 : {}", fileName);
+
+        // 2025/05/16/~~~~ 로 옴
+        String oriFileName;
+        try {
+            oriFileName = URLDecoder.decode(fileName, "utf-8");
+            // 원본 파일 삭제
+            File file = new File(uploadPath + File.separator + oriFileName);
+            file.delete();
+
+            // 썸네일 삭제
+            File thumbmail = new File(file.getParent(), "s_" + file.getName());
+            thumbmail.delete();
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
     // 폴더 생성 메서드

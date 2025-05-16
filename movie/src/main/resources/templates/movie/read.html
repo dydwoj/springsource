@@ -64,8 +64,13 @@
       <!-- poster 영역 -->
       <div class="uploadResult mb-4">
         <ul>
-          <li>
-            <img src="" alt="" />
+          <li th:each="image : ${dto.movieImages}">
+            <img 
+                class="block"
+                th:if="${image.path!=null}"
+                th:src="|/upload/display?fileName=${image.getThumbnailURL}|"
+                th:attr="data-file=${image.getThumbnailURL()}" data-bs-toggle="modal" data-bs-target="#imgModal"
+               />
           </li>
         </ul>
       </div>
@@ -99,5 +104,28 @@
         </label>
       </div>
     </div>
+    <!-- Modal 영역 -->
+    <div class="modal fade" id="imgModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Title</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <img src="" alt="">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+  <th:block layout:fragment="script">
+    <script>
+      const title = "[[${dto.title}]]";
+    </script>
+    <script th:src="@{/js/read.js}"></script>
+  </th:block>
 </html>

@@ -6,6 +6,28 @@
     
     * image = byte 임 (1010)
 
+    - 영화 등록 post
+
+        - 방법
+        
+            1) 1 단계
+                이미지 업로드 => 서버의 특정 폴더에 저장
+                               저장된 파일 정보 클라이언트로 전송
+                               이미지 폴더에서 삭제
+
+            2) 2 단계 (DB와 연동)
+                * 실제 이미지 그 자체를 DB에 저장하는 방법도 있음
+                등록한 포스터에 대한 정보를 DB에 저장
+
+        - JS 에서 DTO 로 담기
+            참고 : movie/upload.js, movie/create.js
+
+            ex 1)
+            DTO 단의
+                => private List<MovieImageDTO> movieImages = new ArrayList<>();
+                => JS 에서 값 담기
+                => <input type="hidden" name="movieImages[${순서(몇번째 배열인지)}].변수명" value="${obj.dataset.변수명}">
+
         - 이미지 저장법
             1) 클라우드
                 => 돈내고 사용해야 함
@@ -174,3 +196,7 @@
                     => 전체 파일의 용량 : 30MB
 
                 com.example.movie.upload.path=upload
+
+        - 업로드한 파일 지우기
+            참고 : movie
+
