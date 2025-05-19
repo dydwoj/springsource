@@ -19,6 +19,8 @@ import com.example.movie.entity.Movie;
 import com.example.movie.entity.MovieImage;
 import com.example.movie.entity.Review;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootTest
 public class MovieRepositoryTest {
 
@@ -113,6 +115,27 @@ public class MovieRepositoryTest {
         // MovieImage movieImage = (MovieImage) result.get(0)[1];
         // Long cnt = (Long) result.get(0)[2];
         // Double avg = (double) result.get(0)[3];
+    }
+
+    // 리뷰 조회 테스트
+    @Test
+    public void findByMovieTest() {
+
+        System.out.println(reviewRepository.findByMovie(Movie.builder().mno(2L).build()));
+
+    }
+
+    // @Transactional // select 구문 2개 사용
+    @Test
+    public void findByMovieTest2() {
+
+        List<Review> list = reviewRepository.findByMovie(Movie.builder().mno(2L).build());
+
+        for (Review review : list) {
+            System.out.println(review);
+            System.out.println(review.getMember().getEmail());
+        }
+
     }
 
 }

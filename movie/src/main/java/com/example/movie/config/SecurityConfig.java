@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices.RememberMeTokenAlgorithm;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 // import com.example.board.security.CustomLoginSuccessHandler;
 
@@ -25,15 +26,21 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http, RememberMeServices rememberMeServices) throws Exception {
 
         http.authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll());
+                .requestMatchers("/", "/assets/**", "/css/**", "/js/**", "/upload/**").permitAll()
+                .requestMatchers("/movie/list", "/movie/read").permitAll()
+                .requestMatchers("/reviews/**", "/upload/display/**").permitAll()
+                .requestMatchers("/member/register").permitAll()
+                .anyRequest().authenticated());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
 
-        // .formLogin(login -> login.loginPage("/member/login")
-        // .successHandler(successHandler())
-        // .permitAll());
-        // http.logout(logout -> logout.logoutRequestMatcher(new
-        // AntPathRequestMatcher("/member/logout"))
-        // .logoutSuccessUrl("/"));
+        // http.csrf(csrf -> csrf.disable());
+
+        http.formLogin(login -> login.loginPage("/member/login")
+                .defaultSuccessUrl("/movie/list")
+                .permitAll());
+
+        http.logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
+                .logoutSuccessUrl("/"));
 
         // http.rememberMe(remember -> remember.rememberMeServices(rememberMeServices));
 

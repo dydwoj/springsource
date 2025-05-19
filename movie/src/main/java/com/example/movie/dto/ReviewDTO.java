@@ -26,6 +26,9 @@ public class ReviewDTO {
     private String email;
     private String nickName;
 
+    // movie 정보
+    private Long mno;
+
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 
