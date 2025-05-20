@@ -20,7 +20,9 @@ public class PageRequestDTO {
     private int size = 10;
 
     // 검색 기능 만들기
-    private String type;
-    private String keyword;
+    @Builder.Default
+    private String type = "";
+    @Builder.Default
+    private String keyword = "";
 
 }

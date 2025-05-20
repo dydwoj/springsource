@@ -133,6 +133,7 @@
 
         9. BaseEntity 작성
                 main/Application 에 @EnableJpaAuditing 추가
+                    => @EntityListeners 사용을 위해서 추가함
 
     - 데이터베이스(DB) 작업
 

@@ -146,3 +146,22 @@
                 1) .anyRequest().permitAll() : 모든 경로 열기
                 2) @PreAuthorize("isAuthenticated()")
                     => 컨트롤러에 선언
+
+    - 비밀번호 변경
+        참고 : movie/MemberController
+
+        - 변경시
+            1) 세션 해제 후 로그인 페이지로 이동
+            2) SecurityContext 비밀번호 업데이트
+                => 제외한 프로필 내역들도 업데이트 해야 함
+
+                - SecurityContext 업데이트
+                    SecurityContext context = SecurityContextHolder.getContext();
+                    Authentication authentication = context.getAuthentication();
+                    AuthDTO명 authDTO명 = (DTO명) authentication.getPrincipal();
+                    authDTO명.getDTO명().setNickName(DTO명.getNickName());
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    - 회원 탈퇴
+        

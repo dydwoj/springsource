@@ -40,10 +40,10 @@ const reviewList = () => {
       result += `<div class="text-muted"><span class="small">${formatDate(review.createdDate)}</span></div></div>`;
       result += `<div class="d-flex flex-column align-self-center">`;
       // 로그인 사용자 == 댓글작성자
-      // if (reply.replyerEmail == loginUser) {
-      result += `<div class="mb-2"><button class="btn btn-outline-danger btn-sm">Delete</button></div>`;
-      result += `<div><button class="btn btn-outline-success btn-sm">Modify</button></div>`;
-      // }
+      if (review.email == loginUser) {
+        result += `<div class="mb-2"><button class="btn btn-outline-danger btn-sm">Delete</button></div>`;
+        result += `<div><button class="btn btn-outline-success btn-sm">Modify</button></div>`;
+      }
       result += `</div></div>`;
     });
 

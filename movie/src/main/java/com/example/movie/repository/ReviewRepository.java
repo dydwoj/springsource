@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
-import org.springframework.data.repository.query.Param;
 
+import com.example.movie.entity.Member;
 import com.example.movie.entity.Movie;
 import com.example.movie.entity.Review;
 import java.util.List;
@@ -17,7 +17,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Modifying // delete, update 시 반드시 작성
     @Query("DELETE FROM Review r WHERE r.movie = :movie")
-    void deleteByMovie(@Param("movie") Movie movie);
+    void deleteByMovie(Movie movie);
+
+    // 멤버탈퇴시 해당 멤버가 작성한 모든 리뷰 제거
+    @Modifying
+    @Query("DELETE FROM Review r WHERE r.member = :member")
+    void deleteByMember(Member member);
 
     // movie 아이디를 이용해 리뷰 가져오기
     @EntityGraph(attributePaths = "member", type = EntityGraphType.FETCH)

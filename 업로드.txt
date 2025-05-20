@@ -6,6 +6,9 @@
     
     * image = byte 임 (1010)
 
+    * modal
+        참고 : movie/read.html
+
     - 영화 등록 post
 
         - 방법
@@ -199,4 +202,13 @@
 
         - 업로드한 파일 지우기
             참고 : movie
+
+            - DB 와 로컬서버파일 일치시키기
+                참고 : movie/movieImageRepository, movie/task
+
+                - main 단
+                    main/Application 에 @EnableScheduling 추가
+                        => @Scheduling 활성화를 위해서 함
+
+                    * cron : 유닉스 계열 운영체제에서 사용하는 작업 스케줄러
 

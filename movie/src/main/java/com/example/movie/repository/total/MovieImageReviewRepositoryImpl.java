@@ -53,11 +53,20 @@ public class MovieImageReviewRepositoryImpl extends QuerydslRepositorySupport im
         JPQLQuery<Tuple> tuple = query.select(movie, movieImage, count, avg).where(movieImage.inum.in(min));
         // .orderBy(movie.mno.desc());
 
+        // ==============================================================================================================
         // 검색
         BooleanBuilder builder = new BooleanBuilder();
         BooleanExpression expression = movie.mno.gt(0);
         builder.and(expression);
 
+        BooleanBuilder condition = new BooleanBuilder();
+        if (!type.isEmpty() && type.contains("title")) {
+            condition.or(movie.title.contains(keyword));
+            builder.and(condition);
+        }
+        tuple.where(builder);
+
+        // ==============================================================================================================
         // Sort 생성
         Sort sort = pageable.getSort(); // => bno 로 Sort 요청한 값 가져옴
 
