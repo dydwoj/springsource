@@ -115,3 +115,12 @@ movie 프로젝트
     3) 관계 맺기
         1. 영화리뷰(N)와 회원(M)은 여러개 작성
         2. 영화(1)에 영화이미지(N) 여러개
+
+--------------------------------------------------
+novel 프로젝트
+
+    1. 전체조회 : http://localhost:8080/api/books (get)
+    2. 하나조회 : http://localhost:8080/api/books/1 (get)
+    3. 입력 : http://localhost:8080/api/books/add (post)
+    4. 수정 : http://localhost:8080/api/books/1 (put)
+    5. 삭제 : http://localhost:8080/api/books/1 (delete)

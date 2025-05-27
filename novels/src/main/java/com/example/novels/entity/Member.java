@@ -2,8 +2,6 @@ package com.example.novels.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,15 +15,18 @@ import lombok.ToString;
 @Getter
 @ToString
 
-@Entity
-public class Genre {
+@Entity(name = "NOVEL_MEMBER")
+public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "GENRE_ID")
-    private Long id;
+    private String email;
 
-    @Column(nullable = false, name = "GENRE_NAME")
-    private String name;
+    @Column(nullable = false)
+    private String pw;
+
+    @Column(nullable = false)
+    private String nickname;
+
+    private boolean social;
 
 }

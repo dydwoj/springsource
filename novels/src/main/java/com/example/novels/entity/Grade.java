@@ -1,7 +1,5 @@
 package com.example.novels.entity;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,33 +18,25 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @Getter
-@ToString(exclude = "genre")
+@ToString(exclude = { "novel", "member" })
 
 @Entity
-public class Novel {
+public class Grade {
 
     @Id
-    @Column(name = "NOVEL_ID")
+    @Column(name = "GRADE_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String author;
-
-    private LocalDate publishedDate;
-
-    @Column(nullable = false)
-    private boolean available;
+    private Long rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GENRE_ID")
-    private Genre genre;
+    @JoinColumn(name = "NOVEL_ID")
+    private Novel novel;
 
-    public void changeAvailable(boolean available) {
-        this.available = available;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEMBER_ID")
+    private Member member;
 
 }
