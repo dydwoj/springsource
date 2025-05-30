@@ -78,7 +78,7 @@ public class NovelRepositoryTest {
     @Test
     public void getNovelListTest() {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
-        Page<Object[]> result = novelRepository.list(pageable, 4L, "");
+        Page<Object[]> result = novelRepository.list(pageable, 3L, "The Hobbit");
         for (Object[] objects : result) {
             System.out.println(Arrays.toString(objects));
         }
