@@ -47,7 +47,7 @@ public class SearchNovelRepositoryImpl extends QuerydslRepositorySupport impleme
     }
 
     @Override
-    public Page<Object[]> list(Pageable pageable) {
+    public Page<Object[]> list(Pageable pageable, Long gid, String keyword) {
 
         QNovel novel = QNovel.novel;
         QGenre genre = QGenre.genre;
@@ -67,8 +67,20 @@ public class SearchNovelRepositoryImpl extends QuerydslRepositorySupport impleme
         BooleanExpression expression = novel.id.gt(0);
         builder.and(expression);
 
+        // where n1_0.novel_id > 0 ? and genre_id = 3 and title like '' or author like
+        // ''
         // 검색
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+        if (gid != 0) {
+            conditionBuilder.and(novel.genre.id.eq(gid));
+        }
 
+        if (!keyword.isEmpty()) {
+            conditionBuilder.and(novel.title.contains(keyword));
+            conditionBuilder.or(novel.author.contains(keyword));
+        }
+
+        builder.and(conditionBuilder);
         tuple.where(builder);
 
         // ==============================================================================================================

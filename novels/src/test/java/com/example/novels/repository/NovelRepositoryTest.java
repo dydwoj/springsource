@@ -1,7 +1,6 @@
 package com.example.novels.repository;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
@@ -79,7 +78,7 @@ public class NovelRepositoryTest {
     @Test
     public void getNovelListTest() {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
-        Page<Object[]> result = novelRepository.list(pageable);
+        Page<Object[]> result = novelRepository.list(pageable, 4L, "");
         for (Object[] objects : result) {
             System.out.println(Arrays.toString(objects));
         }

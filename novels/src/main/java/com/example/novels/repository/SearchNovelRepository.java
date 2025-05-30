@@ -9,6 +9,6 @@ public interface SearchNovelRepository {
     Object[] getNovelByID(Long id);
 
     // 페이지 나누기 + 조회
-    Page<Object[]> list(Pageable pageable);
+    Page<Object[]> list(Pageable pageable, Long gId, String keyword);
 
 }

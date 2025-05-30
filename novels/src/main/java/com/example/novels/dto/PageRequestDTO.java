@@ -21,7 +21,8 @@ public class PageRequestDTO {
 
     // 검색 기능 만들기
     @Builder.Default
-    private String type = "";
+    private Long genre = 0L;
+
     @Builder.Default
     private String keyword = "";
 
