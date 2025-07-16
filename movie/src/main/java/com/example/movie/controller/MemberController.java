@@ -51,7 +51,7 @@ public class MemberController {
         dto.setMemberRole(MemberRole.MEMBER);
 
         if (result.hasErrors()) {
-            return "/member/register";
+            return "member/register";
         }
 
         try {

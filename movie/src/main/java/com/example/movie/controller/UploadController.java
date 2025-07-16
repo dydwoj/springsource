@@ -39,10 +39,10 @@ public class UploadController {
     @Value("${com.example.movie.upload.path}")
     private String uploadPath;
 
-    @GetMapping("/create")
-    public String getUpload() {
-        return "/upload/test";
-    }
+    // @GetMapping("/create")
+    // public String getUpload() {
+    // return "/upload/test";
+    // }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/files")
